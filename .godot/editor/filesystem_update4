@@ -1,0 +1,10 @@
+res://creatures/creature_base.tscn
+res://creatures/behavior_tree/behavior_nodes/conditions/check_threat.gd
+res://creatures/behavior_tree/behavior_nodes/actions/flee_action.gd
+res://creatures/behavior_tree/behavior_nodes/actions/seek_food_action.gd
+res://creatures/perception_system.gd
+res://creatures/behavior_tree/behavior_nodes/behavior_node.gd
+res://creatures/behavior_tree/behavior_tree.gd
+res://creatures/behavior_tree/behavior_nodes/actions/wander_action.gd
+res://creatures/behavior_tree/behavior_nodes/actions/idle_action.gd
+res://creatures/behavior_tree/behavior_nodes/conditions/check_hungry.gd
