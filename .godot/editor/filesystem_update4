@@ -1,1 +1,3 @@
-res://creatures/creature_base.tscn
+res://03_entities/base/creatures/creature_base.tscn
+res://00_core/autoload/signal_bus.gd
+res://00_core/autoload/README.md

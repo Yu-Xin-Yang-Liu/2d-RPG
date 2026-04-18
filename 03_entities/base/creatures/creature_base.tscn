@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://dc7pijakgf6rp"]
 
-[ext_resource type="Script" uid="uid://bxartcybst5ns" path="res://creatures/creature.gd" id="1_creature"]
-[ext_resource type="Script" uid="uid://brgfdsgai0fck" path="res://creatures/state_machine/states/dead_state.gd" id="3_jamdy"]
-[ext_resource type="Script" uid="uid://dtuo3m2as4v3b" path="res://creatures/state_machine/state_machine.gd" id="3_ytfgs"]
-[ext_resource type="Script" uid="uid://doo1abo53s57v" path="res://creatures/state_machine/states/flee_state.gd" id="4_ytfgs"]
-[ext_resource type="Script" uid="uid://bsvknrgflced3" path="res://creatures/state_machine/states/idle_state.gd" id="5_gj8kp"]
-[ext_resource type="Script" uid="uid://cp6qjci404yis" path="res://creatures/state_machine/states/rest_state.gd" id="6_ijdxg"]
-[ext_resource type="Script" uid="uid://cfe1q6imnrdp4" path="res://creatures/state_machine/states/seek_food_state.gd" id="7_mf5td"]
-[ext_resource type="Script" uid="uid://5pvjuts255wh" path="res://creatures/state_machine/states/wander_state.gd" id="8_f37ph"]
-[ext_resource type="Script" uid="uid://caj48g0nul6ch" path="res://creatures/perception_system.gd" id="9_perception"]
-[ext_resource type="Script" uid="uid://d18asgq41mr26" path="res://creatures/behavior_tree/behavior_tree.gd" id="10_behaviortree"]
+[ext_resource type="Script" uid="uid://bxartcybst5ns" path="res://03_entities/base/creatures/creature.gd" id="1_creature"]
+[ext_resource type="Resource" uid="uid://bq3e1vaf706ua" path="res://01_data/resources/base/creature_config.tres" id="2_x2jln"]
+[ext_resource type="Script" uid="uid://dtuo3m2as4v3b" path="res://02_systems/ai/state_machine/state_machine.gd" id="3_8dp0c"]
+[ext_resource type="Script" uid="uid://brgfdsgai0fck" path="res://02_systems/ai/state_machine/states/dead_state.gd" id="3_jamdy"]
+[ext_resource type="Script" uid="uid://doo1abo53s57v" path="res://02_systems/ai/state_machine/states/flee_state.gd" id="4_ytfgs"]
+[ext_resource type="Script" uid="uid://bsvknrgflced3" path="res://02_systems/ai/state_machine/states/idle_state.gd" id="5_gj8kp"]
+[ext_resource type="Script" uid="uid://cp6qjci404yis" path="res://02_systems/ai/state_machine/states/rest_state.gd" id="6_ijdxg"]
+[ext_resource type="Script" uid="uid://cfe1q6imnrdp4" path="res://02_systems/ai/state_machine/states/seek_food_state.gd" id="7_mf5td"]
+[ext_resource type="Script" uid="uid://5pvjuts255wh" path="res://02_systems/ai/state_machine/states/wander_state.gd" id="8_f37ph"]
+[ext_resource type="Script" uid="uid://caj48g0nul6ch" path="res://02_systems/perception/perception_system.gd" id="9_perception"]
+[ext_resource type="Script" uid="uid://d18asgq41mr26" path="res://02_systems/ai/behavior_tree/behavior_tree.gd" id="10_behaviortree"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oe6p0"]
 size = Vector2(30, 45)
@@ -18,6 +19,7 @@ size = Vector2(30, 45)
 
 [node name="root" type="CharacterBody2D" unique_id=172008644]
 script = ExtResource("1_creature")
+config = ExtResource("2_x2jln")
 
 [node name="Head" type="ColorRect" parent="." unique_id=472176506]
 offset_left = -10.0
@@ -55,8 +57,9 @@ shape = SubResource("CapsuleShape2D_1dfw4")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PerceptionSystem/Smell" unique_id=577626575]
 shape = SubResource("CapsuleShape2D_1dfw4")
 
-[node name="StateMachine" type="Node" parent="." unique_id=1736204286]
-script = ExtResource("3_ytfgs")
+[node name="StateMachine" type="Node" parent="." unique_id=1523947264]
+script = ExtResource("3_8dp0c")
+metadata/_custom_type_script = "uid://dtuo3m2as4v3b"
 
 [node name="WanderState" type="Node" parent="StateMachine" unique_id=408120317]
 script = ExtResource("8_f37ph")
@@ -82,6 +85,6 @@ metadata/_custom_type_script = "uid://bsvknrgflced3"
 script = ExtResource("6_ijdxg")
 metadata/_custom_type_script = "uid://cp6qjci404yis"
 
-[node name="BehaviorTree" type="Node" parent="." unique_id=867400116]
+[node name="BehaviorTree" type="Node" parent="." unique_id=166368602]
 script = ExtResource("10_behaviortree")
 metadata/_custom_type_script = "uid://d18asgq41mr26"

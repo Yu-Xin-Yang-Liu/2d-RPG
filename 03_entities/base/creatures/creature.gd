@@ -7,31 +7,43 @@ extends CharacterBody2D
 
 # 生物名称
 @export var creature_name: String = "Creature"
+# 配置资源
+@export var config: CreatureConfig
+
 # 最大生命值
-@export var max_health: float = 100.0
+@export var max_health: float
 # 最大能量值
-@export var max_energy: float = 100.0
+@export var max_energy: float
 # 最大饱食度
-@export var max_satiety: float = 100.0
+@export var max_satiety: float
 # 移动速度
-@export var move_speed: float = 100.0
+@export var move_speed: float
 # 游荡半径
-@export var wander_radius: float = 200.0
+@export var wander_radius: float
 # 感知范围
-@export var perception_range: float = 150.0
-# 繁殖阈值：饱食度和能量达到此值时可以繁殖
-@export var reproduction_threshold: float = 80.0
+@export var perception_range: float
+# 繁殖阈值：饱食度达到此值时可以繁殖
+@export var reproduction_threshold: float
 
 # 视觉范围：生物能看到的最大距离
-@export var vision_range: float = 150.0
+@export var vision_range: float
 # 视觉角度：视野的扇形角度（度数）
-@export var vision_angle: float = 90.0
+@export var vision_angle: float
 
 # 听觉范围：能听到声音的最大距离
-@export var hearing_range: float = 100.0
+@export var hearing_range: float
 
 # 嗅觉范围：能闻到气味的最大距离
-@export var smell_range: float = 80.0
+@export var smell_range: float
+
+# 消耗速率
+var energy_consumption_rate: float
+var satiety_consumption_rate: float
+var starvation_energy_penalty: float
+var energy_depletion_health_penalty: float
+
+# 能量繁殖阈值
+var energy_reproduction_threshold: float
 
 #endregion
 
@@ -62,6 +74,8 @@ var behavior_tree: BehaviorTree
 #region 生命周期
 
 func _ready() -> void:
+	# 加载配置
+	_load_config()
 	# 初始化属性
 	_init_stats()
 	# 设置感知系统
@@ -70,6 +84,44 @@ func _ready() -> void:
 	_setup_state_machine()
 	# 设置行为树
 	_setup_behavior_tree()
+
+# 加载配置资源
+func _load_config() -> void:
+	if config:
+		max_health = config.max_health
+		max_energy = config.max_energy
+		max_satiety = config.max_satiety
+		move_speed = config.move_speed
+		wander_radius = config.wander_radius
+		perception_range = config.perception_range
+		reproduction_threshold = config.reproduction_threshold
+		vision_range = config.vision_range
+		vision_angle = config.vision_angle
+		hearing_range = config.hearing_range
+		smell_range = config.smell_range
+		energy_consumption_rate = config.energy_consumption_rate
+		satiety_consumption_rate = config.satiety_consumption_rate
+		starvation_energy_penalty = config.starvation_energy_penalty
+		energy_depletion_health_penalty = config.energy_depletion_health_penalty
+		energy_reproduction_threshold = config.energy_reproduction_threshold
+	else:
+		# 设置默认值，确保即使没有配置资源也能正常运行
+		max_health = 100.0
+		max_energy = 100.0
+		max_satiety = 100.0
+		move_speed = 100.0
+		wander_radius = 200.0
+		perception_range = 150.0
+		reproduction_threshold = 80.0
+		vision_range = 150.0
+		vision_angle = 90.0
+		hearing_range = 100.0
+		smell_range = 80.0
+		energy_consumption_rate = 2.0
+		satiety_consumption_rate = 3.0
+		starvation_energy_penalty = 5.0
+		energy_depletion_health_penalty = 2.0
+		energy_reproduction_threshold = 70.0
 
 # 初始化属性值
 func _init_stats() -> void:
@@ -122,17 +174,17 @@ func _physics_process(delta: float) -> void:
 # 更新属性值（饥饿、能量消耗等）
 func _update_stats(delta: float) -> void:
 	# 能量自然消耗
-	current_energy -= delta * 2.0
+	current_energy -= delta * energy_consumption_rate
 	# 饱食度自然消耗
-	current_satiety -= delta * 3.0
+	current_satiety -= delta * satiety_consumption_rate
 	
 	# 如果饱食度为0，能量快速消耗
 	if current_satiety <= 0:
-		current_energy -= delta * 5.0
+		current_energy -= delta * starvation_energy_penalty
 	
 	# 如果能量为0，生命值开始减少
 	if current_energy <= 0:
-		current_health -= delta * 2.0
+		current_health -= delta * energy_depletion_health_penalty
 	
 	# 如果生命值耗尽，转换到死亡状态
 	if current_health <= 0 and state_machine:
@@ -167,6 +219,6 @@ func get_state_name() -> String:
 # 检查是否可以繁殖
 # 返回: 是否满足繁殖条件
 func can_reproduce() -> bool:
-	return current_satiety >= reproduction_threshold and current_energy >= 70.0
+	return current_satiety >= reproduction_threshold and current_energy >= energy_reproduction_threshold
 
 #endregion

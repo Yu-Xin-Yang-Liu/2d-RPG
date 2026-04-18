@@ -8,7 +8,7 @@ extends Node2D
 # 初始生物数量：场景启动时生成的数量
 @export var initial_creature_count: int = 20
 # 生物场景：用于实例化生物的预制场景
-@export var creature_scene: PackedScene = preload("res://creatures/creature_base.tscn")
+@export var creature_scene: PackedScene = preload("res://03_entities/base/creatures/creature_base.tscn")
 
 # ============ 变量 ============
 
