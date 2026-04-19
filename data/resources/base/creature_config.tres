@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="CreatureConfig" format=3 uid="uid://bq3e1vaf706ua"]
 
-[ext_resource type="Script" uid="uid://cmofkocse5cbr" path="res://01_data/resources/base/creature_config.gd" id="1_36g3u"]
+[ext_resource type="Script" uid="uid://cmofkocse5cbr" path="res://data/resources/base/creature_config.gd" id="1_36g3u"]
+
 
 
 [resource]
