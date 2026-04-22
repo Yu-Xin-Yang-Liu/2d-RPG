@@ -1,22 +1,21 @@
 [gd_scene format=3 uid="uid://b6yim8hoxaqlj"]
 
 [ext_resource type="Script" uid="uid://rrgw81ei6dvv" path="res://systems/ecosystem/ecosystem_manager.gd" id="1_mgr"]
+[ext_resource type="PackedScene" uid="uid://ccf8cg02i1a4i" path="res://ui/ecosystem_ui.tscn" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://enhcaqk3m1ks" path="res://systems/environment/environment.tscn" id="4_jyhfs"]
-[ext_resource type="PackedScene" uid="uid://cd62ssbidps1k" path="res://ui/ecosystem_ui.tscn" id="4_ui"]
-
 
 [node name="Main" type="Node2D" unique_id=616986595]
 
 [node name="CreatureContainer" type="Node2D" parent="." unique_id=288471744]
 
-[node name="EcosystemManager" type="Node" parent="." unique_id=1984266632]
-script = ExtResource("1_mgr")
-initial_creature_count = 15
-creature_scene = null
-
 [node name="Camera2D" type="Camera2D" parent="." unique_id=614339629]
+position = Vector2(581, 323)
 position_smoothing_enabled = true
 
-[node name="EcosystemUI" parent="." unique_id=1093421711 instance=ExtResource("4_ui")]
-
 [node name="Environment" parent="." unique_id=1613657650 instance=ExtResource("4_jyhfs")]
+
+[node name="EcosystemUI" parent="." unique_id=1572726054 instance=ExtResource("3_sugp2")]
+
+[node name="EcosystemManager" type="Node2D" parent="." unique_id=85679142]
+script = ExtResource("1_mgr")
+metadata/_custom_type_script = "uid://rrgw81ei6dvv"

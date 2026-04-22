@@ -1,1 +1,2 @@
 res://entities/base/creatures/creature_base.tscn
+res://systems/perception/perception_system.gd
