@@ -24,6 +24,9 @@ var max_satiety: float = 100.0
 # 繁殖阈值
 @export var reproduction_threshold: float = 80.0
 
+# 是否自动挂载感知系统
+@export var auto_mount_perception: bool = true
+
 # 消耗速率
 var energy_consumption_rate: float = 2.0
 var satiety_consumption_rate: float = 3.0
@@ -164,6 +167,10 @@ func reproduce() -> AnimalBase:
 
 # 挂载感知系统
 func _mount_perception_system() -> void:
+	# 检查是否自动挂载
+	if not auto_mount_perception:
+		return
+	
 	# 检查是否已经挂载
 	if has_component("perception"):
 		return
@@ -173,12 +180,6 @@ func _mount_perception_system() -> void:
 	if perception_script:
 		var perception_system = perception_script.new()
 		mount_component("perception", perception_system)
-		# 配置感知系统参数
-		if perception_system:
-			perception_system.vision_range = 150.0
-			perception_system.vision_angle = 90.0
-			perception_system.hearing_range = 100.0
-			perception_system.smell_range = 80.0
 
 # 获取感知系统
 func _get_perception_system() -> PerceptionSystem:

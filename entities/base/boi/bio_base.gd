@@ -45,7 +45,7 @@ var components: Dictionary = {}
 #endregion
 
 # ============ 生命周期方法 ============
-
+#region 生命周期方法
 # 初始化
 func _ready() -> void:
 	# 初始化生物
@@ -89,9 +89,10 @@ func check_lifecycle() -> void:
 func on_death() -> void:
 	# 子类可以重写此方法处理死亡逻辑
 	pass
+#endregion
 
 # ============ 通用方法 ============
-
+#region 通用方法
 # 获取生物类型
 func get_bio_type() -> String:
 	return bio_type
@@ -123,9 +124,10 @@ func get_energy_percent() -> float:
 	if max_energy <= 0:
 		return 0.0
 	return energy / max_energy
+#endregion
 
 # ============ 交互方法 ============
-
+#region 交互方法
 # 受到伤害
 # amount: 伤害值
 func take_damage(amount: float) -> void:
@@ -148,9 +150,10 @@ func consume_energy(amount: float) -> bool:
 # amount: 恢复值
 func restore_energy(amount: float) -> void:
 	energy = min(energy + amount, max_energy)
+#endregion
 
 # ============ 状态检查方法 ============
-
+#region 状态检查方法
 # 是否存活
 func is_alive() -> bool:
 	return life_state == "alive"
@@ -178,9 +181,10 @@ func can_reproduce() -> bool:
 func reproduce() -> BioBase:
 	# 子类可以重写此方法
 	return null
+#endregion
 
 # ============ 移动相关（如果适用） ============
-
+#region 移动相关（如果适用）
 # 移动到指定位置
 # target_position: 目标位置
 # speed: 移动速度
@@ -224,11 +228,11 @@ func consume_resources(resources: Dictionary) -> bool:
 func produce_resources() -> Dictionary:
 	# 子类可以重写此方法
 	return {}
+#endregion
 
 # ============ 序列化方法 ============
-
+#region 序列化方法
 # 序列化方法
-
 # 序列化为字典
 func to_dict() -> Dictionary:
 	return {
@@ -263,9 +267,10 @@ func from_dict(data: Dictionary) -> void:
 	if trait_system:
 		var traits_data = data.get("traits", {})
 		trait_system.from_dict(traits_data)
+#endregion
 
 # ============ 组件管理方法 ============
-
+#region 组件管理方法
 # 挂载组件
 # component_name: 组件名称
 # component: 组件节点
@@ -301,10 +306,11 @@ func has_component(component_name: String) -> bool:
 
 # 获取所有组件
 func get_all_components() -> Array:
+#endregion
 	return components.values()
 
 # ============ 特质管理方法 ============
-
+#region 特质管理方法
 # 添加特质
 # trait_name: 特质名称
 # trait_type: 特质类型
@@ -333,9 +339,11 @@ func get_trait(trait_name: String) -> Dictionary:
 	if trait_system:
 		return trait_system.get_trait(trait_name)
 	return {}
+#endregion
 
 # ============ 状态检查方法扩展 ============
 
+#region 状态检查方法扩展
 # 是否可以移动
 func can_move() -> bool:
 	return not has_trait("cannot_move")
@@ -355,6 +363,7 @@ func has_consciousness() -> bool:
 # 是否有情绪
 func has_emotions() -> bool:
 	return not has_trait("no_emotions") and ai_level >= 1
+#endregion
 
 # ============ 调试方法 ============
 

@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://dfsu8rmkth1gr"]
+
+[ext_resource type="Script" uid="uid://caj48g0nul6ch" path="res://systems/perception/perception_system.gd" id="1_t0ghp"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t0ghp"]
+
+[node name="PerceptionSystem" type="Node2D" unique_id=40779199]
+script = ExtResource("1_t0ghp")
+metadata/_custom_type_script = "uid://caj48g0nul6ch"
+
+[node name="Vision" type="Area2D" parent="." unique_id=704250046]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Vision" unique_id=1480786446]
+shape = SubResource("CapsuleShape2D_t0ghp")
+
+[node name="Hearing" type="Area2D" parent="." unique_id=1808168860]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hearing" unique_id=522127079]
+shape = SubResource("CapsuleShape2D_t0ghp")
+
+[node name="Smell" type="Area2D" parent="." unique_id=2103189919]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Smell" unique_id=432224300]
+shape = SubResource("CapsuleShape2D_t0ghp")

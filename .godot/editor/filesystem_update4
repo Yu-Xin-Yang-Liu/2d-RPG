@@ -1,3 +1,10 @@
-res://entities/creatures/creature_base.tscn
-res://entities/base/animal_base.gd
-res://entities/base/traits/trait_system.gd
+res://entities/base/animal_base/animal_base.tscn
+res://entities/base/（弃置）animal_base/animal_base.tscn
+res://entities/base/static_life.gd
+res://entities/base/mobile_creature.gd
+res://entities/base/spirit_entity.gd
+res://entities/base/construct_entity.gd
+res://systems/ai/components/construct_component.gd
+res://systems/ai/components/growth_component.gd
+res://systems/ai/components/movement_component.gd
+res://systems/ai/components/spiritual_component.gd

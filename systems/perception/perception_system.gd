@@ -2,9 +2,7 @@ class_name PerceptionSystem
 extends Node2D
 
 # 感知系统：管理生物的视觉、听觉和嗅觉检测
-
-# ============ 导出属性 ============
-
+#region 导出属性
 # 视觉范围：生物能看到的最大距离
 @export var vision_range: float = 150.0
 # 视觉角度：视野的扇形角度（度数）
@@ -23,6 +21,7 @@ extends Node2D
 @export var food_layer: int = 2
 # 危险层：用于检测危险对象
 @export var danger_layer: int = 3
+#endregion
 
 # ============ 节点引用 ============
 
