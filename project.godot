@@ -18,6 +18,14 @@ config/icon="res://icon.svg"
 
 "main_scene/res://scenes/main.tscn[physics]3d/physics_engine"="Jolt Physics"
 
+[autoload]
+
+GTraitsRegistry="*res://gtraits/helper/gtraits_registry.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-traits/plugin.cfg")
+
 [physics]
 
 3d/physics_engine="Jolt Physics"
