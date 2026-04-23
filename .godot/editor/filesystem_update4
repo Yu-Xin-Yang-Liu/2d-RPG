@@ -1,8 +1,3 @@
-res://gtraits/helper/gtraits.gd
-res://gtraits/helper/gtraits_registry.gd
 res://entities/creatures/creature_base.tscn
-res://entities/base/boi/traits/gift_traits/gift_traits.gd
-res://entities/base/boi/traits/gift_traits/RootAbsorption.gd
-res://entities/base/boi/bio_base.gd
-res://entities/base/boi/example_tree_evolution.gd
-res://entities/creatures/plant_base.gd
+res://gtraits/helper/gtraits.gd
+res://systems/ecosystem/ecosystem_manager.gd
