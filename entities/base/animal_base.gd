@@ -21,23 +21,8 @@ var max_satiety: float = 100.0
 # 游荡半径
 @export var wander_radius: float = 200.0
 
-# 感知范围
-@export var perception_range: float = 150.0
-
 # 繁殖阈值
 @export var reproduction_threshold: float = 80.0
-
-# 视觉范围
-@export var vision_range: float = 150.0
-
-# 视觉角度
-@export var vision_angle: float = 90.0
-
-# 听觉范围
-@export var hearing_range: float = 100.0
-
-# 嗅觉范围
-@export var smell_range: float = 80.0
 
 # 消耗速率
 var energy_consumption_rate: float = 2.0
@@ -55,9 +40,6 @@ var energy_reproduction_threshold: float = 70.0
 # 状态机引用
 var state_machine: StateMachine
 
-# 感知系统引用
-var perception_system: PerceptionSystem
-
 # 行为树引用
 var behavior_tree: BehaviorTree
 
@@ -72,6 +54,20 @@ func initialize() -> void:
 	health = max_health
 	energy = max_energy
 	satiety = max_satiety
+	
+	# 设置AI等级
+	ai_level = 1 # 动物具有基础灵性AI
+	
+	# 添加动物的先天枷锁特质
+	add_trait("low_intelligence", "shackle", {"description": "低智本能"})
+	add_trait("cannot_cultivate", "shackle", {"description": "无法修行"})
+	
+	# 添加动物的种族天赋
+	add_trait("basic_perception", "gift", {"description": "基础感知"})
+	add_trait("instinct_behavior", "gift", {"description": "本能行为"})
+	
+	# 挂载感知系统组件（动物默认具有感知能力）
+	_mount_perception_system()
 
 # 更新状态
 func update_state(delta: float) -> void:
@@ -109,6 +105,10 @@ func eat(food_amount: float) -> void:
 # direction: 移动方向
 # speed: 移动速度
 func move(direction: Vector2, speed: float) -> void:
+	# 检查是否可以移动
+	if not can_move():
+		return
+	
 	# 子类可以重写此方法
 	var movement = direction.normalized() * speed
 	position += movement
@@ -160,22 +160,67 @@ func reproduce() -> AnimalBase:
 
 #endregion
 
-#region 感知方法
+# 感知方法
+
+# 挂载感知系统
+func _mount_perception_system() -> void:
+	# 检查是否已经挂载
+	if has_component("perception"):
+		return
+	
+	# 尝试加载感知系统
+	var perception_script = load("res://systems/perception/perception_system.gd")
+	if perception_script:
+		var perception_system = perception_script.new()
+		mount_component("perception", perception_system)
+		# 配置感知系统参数
+		if perception_system:
+			perception_system.vision_range = 150.0
+			perception_system.vision_angle = 90.0
+			perception_system.hearing_range = 100.0
+			perception_system.smell_range = 80.0
+
+# 获取感知系统
+func _get_perception_system() -> PerceptionSystem:
+	return get_component("perception") as PerceptionSystem
 
 # 感知周围环境
 func perceive_environment() -> void:
+	# 检查是否可以感知
+	if not can_perceive():
+		return
+	
 	# 子类可以重写此方法
+	var perception_system = _get_perception_system()
 	if perception_system:
 		perception_system.perceive_environment()
 
 # 检测附近的食物
 func detect_food() -> Array[BioBase]:
+	# 检查是否可以感知
+	if not can_perceive():
+		return []
+	
 	# 子类可以重写此方法
+	var perception_system = _get_perception_system()
+	if perception_system and perception_system.has_method("get_nearest_food"):
+		var food = perception_system.get_nearest_food()
+		if food:
+			return [food]
 	return []
 
 # 检测附近的威胁
 func detect_threats() -> Array[BioBase]:
+	# 检查是否可以感知
+	if not can_perceive():
+		return []
+	
 	# 子类可以重写此方法
+	var perception_system = _get_perception_system()
+	if perception_system and perception_system.has_method("get_nearest_threat"):
+		var threat = perception_system.get_nearest_threat()
+		if threat:
+			return [threat]
 	return []
 
 #endregion
@@ -190,12 +235,12 @@ func to_dict() -> Dictionary:
 	data["satiety"] = satiety
 	data["max_satiety"] = max_satiety
 	data["wander_radius"] = wander_radius
-	data["perception_range"] = perception_range
-	data["reproduction_threshold"] = reproduction_threshold
-	data["vision_range"] = vision_range
-	data["vision_angle"] = vision_angle
-	data["hearing_range"] = hearing_range
-	data["smell_range"] = smell_range
+	# data["perception_range"] = perception_range
+	# data["reproduction_threshold"] = reproduction_threshold
+	# data["vision_range"] = vision_range
+	# data["vision_angle"] = vision_angle
+	# data["hearing_range"] = hearing_range
+	# data["smell_range"] = smell_range
 	data["energy_consumption_rate"] = energy_consumption_rate
 	data["satiety_consumption_rate"] = satiety_consumption_rate
 	data["starvation_energy_penalty"] = starvation_energy_penalty
@@ -211,12 +256,12 @@ func from_dict(data: Dictionary) -> void:
 	satiety = data.get("satiety", 100.0)
 	max_satiety = data.get("max_satiety", 100.0)
 	wander_radius = data.get("wander_radius", 200.0)
-	perception_range = data.get("perception_range", 150.0)
+	# perception_range = data.get("perception_range", 150.0)
 	reproduction_threshold = data.get("reproduction_threshold", 80.0)
-	vision_range = data.get("vision_range", 150.0)
-	vision_angle = data.get("vision_angle", 90.0)
-	hearing_range = data.get("hearing_range", 100.0)
-	smell_range = data.get("smell_range", 80.0)
+	# vision_range = data.get("vision_range", 150.0)
+	# vision_angle = data.get("vision_angle", 90.0)
+	# hearing_range = data.get("hearing_range", 100.0)
+	# smell_range = data.get("smell_range", 80.0)
 	energy_consumption_rate = data.get("energy_consumption_rate", 2.0)
 	satiety_consumption_rate = data.get("satiety_consumption_rate", 3.0)
 	starvation_energy_penalty = data.get("starvation_energy_penalty", 5.0)
@@ -234,6 +279,6 @@ func print_info() -> void:
 	print("  Move Speed: " + str(move_speed))
 	print("  Satiety: " + str(satiety) + "/" + str(max_satiety))
 	print("  Wander Radius: " + str(wander_radius))
-	print("  Perception Range: " + str(perception_range))
+	#print("  Perception Range: " + str(perception_range))
 
 #endregion

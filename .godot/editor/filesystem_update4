@@ -1,3 +1,3 @@
 res://entities/creatures/creature_base.tscn
-res://gtraits/helper/gtraits.gd
-res://systems/ecosystem/ecosystem_manager.gd
+res://entities/base/animal_base.gd
+res://entities/base/traits/trait_system.gd

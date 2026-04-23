@@ -95,6 +95,7 @@ func has_emotion_restriction() -> bool:
 # ============ 特质效果 ============
 
 # 获取特质效果
+# 特质效果
 # trait_name: 特质名称
 func get_trait_effect(trait_name: String) -> Dictionary:
 	var _trait = get_trait(trait_name)
@@ -107,6 +108,49 @@ func apply_trait_effect(trait_name: String, target: BioBase) -> void:
 	var effect = get_trait_effect(trait_name)
 	# 子类可以重写此方法实现具体效果
 	pass
+
+# ============ 行为权限判断 ============
+
+# 检查是否可以执行特定行为
+# action: 行为名称
+# bio: 生物实例
+func can_perform_action(action: String, bio: BioBase) -> bool:
+	match action:
+		"move":
+			return not has_movement_restriction()
+		"perceive":
+			return not has_perception_restriction()
+		"speak":
+			return not has_speech_restriction() and bio.ai_level >= 2
+		"think":
+			return not has_consciousness_restriction() and bio.ai_level >= 1
+		"feel":
+			return not has_emotion_restriction() and bio.ai_level >= 1
+		"cultivate":
+			return not has_trait("cannot_cultivate")
+		"reproduce":
+			return bio.is_alive() and bio.get_energy_percent() > 0.8
+		_:
+			return true
+
+# 检查是否有特定类型的限制
+# restriction_type: 限制类型
+func has_restriction(restriction_type: String) -> bool:
+	match restriction_type:
+		"movement":
+			return has_movement_restriction()
+		"perception":
+			return has_perception_restriction()
+		"speech":
+			return has_speech_restriction()
+		"consciousness":
+			return has_consciousness_restriction()
+		"emotion":
+			return has_emotion_restriction()
+		"cultivation":
+			return has_trait("cannot_cultivate")
+		_:
+			return false
 
 # ============ 序列化 ============
 
