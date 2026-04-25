@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cnocvqvoymokd"]
 
-[ext_resource type="PackedScene" uid="uid://dfsu8rmkth1gr" path="res://systems/ecosystem/PerceptionSystem.tscn" id="1_vww63"]
+[ext_resource type="PackedScene" uid="uid://dfsu8rmkth1gr" path="res://systems/ai/components/perception/PerceptionSystem.tscn" id="1_vww63"]
 [ext_resource type="PackedScene" uid="uid://cu6lls7jkwdis" path="res://systems/ai/state_machine/state_machine.tscn" id="2_dppu4"]
 [ext_resource type="Script" uid="uid://d18asgq41mr26" path="res://systems/ai/behavior_tree/behavior_tree.gd" id="3_go41o"]
 

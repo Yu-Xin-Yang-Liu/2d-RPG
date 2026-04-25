@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://cxwbvv7cl8xtd"]
+
+[ext_resource type="PackedScene" uid="uid://dfsu8rmkth1gr" path="res://systems/ai/components/perception/PerceptionSystem.tscn" id="2_1fl8n"]
+[ext_resource type="PackedScene" uid="uid://cu6lls7jkwdis" path="res://systems/ai/state_machine/state_machine.tscn" id="3_p5cpb"]
+[ext_resource type="Script" uid="uid://d18asgq41mr26" path="res://systems/ai/behavior_tree/behavior_tree.gd" id="4_38jw2"]
+[ext_resource type="Script" uid="uid://71jnt05232fi" path="res://entities/creatures/sheep.gd" id="5_4x2h9"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1fl8n"]
+size = Vector2(30, 45)
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=1989684634]
+script = ExtResource("5_4x2h9")
+
+[node name="Head" type="ColorRect" parent="." unique_id=631145763]
+offset_left = -10.0
+offset_top = -30.0
+offset_right = 10.0
+offset_bottom = -10.0
+color = Color(1, 0.5, 0.3, 1)
+
+[node name="Body" type="ColorRect" parent="." unique_id=1416703968]
+offset_left = -15.0
+offset_top = -10.0
+offset_right = 15.0
+offset_bottom = 15.0
+color = Color(0.8, 0.4, 0.6, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1696766853]
+position = Vector2(0, -7.5)
+shape = SubResource("RectangleShape2D_1fl8n")
+
+[node name="PerceptionSystem" parent="." unique_id=40779199 instance=ExtResource("2_1fl8n")]
+
+[node name="StateMachine" parent="." unique_id=1630196647 instance=ExtResource("3_p5cpb")]
+
+[node name="BehaviorTree" type="Node" parent="." unique_id=1621430406]
+script = ExtResource("4_38jw2")
+metadata/_custom_type_script = "uid://d18asgq41mr26"

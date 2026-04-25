@@ -5,9 +5,15 @@ extends BehaviorNode
 # 执行待机动作
 func execute(delta: float) -> int:
 	# 获取关联的生物节点
-	if not creature:
+	var bio_base = _get_bio_base()
+	if not bio_base:
 		return BehaviorNode.Status.FAILURE
 	
-	# 设置速度为零，停止移动
-	creature.velocity = Vector2.ZERO
+	# 使用移动组件停止移动
+	if bio_base.has_method("stop_moving"):
+		bio_base.stop_moving()
+	else:
+		# 兼容旧代码
+		if bio_base.has_method("set_velocity"):
+			bio_base.set_velocity(Vector2.ZERO)
 	return BehaviorNode.Status.SUCCESS

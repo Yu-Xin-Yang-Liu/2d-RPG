@@ -52,15 +52,14 @@ func _mount_spiritual_component() -> void:
 	if has_component("spiritual"):
 		return
 	
-	# 加载并创建精神组件
-	var spiritual_script = load("res://systems/ai/components/spiritual_component.gd")
-	if spiritual_script:
-		var spiritual_component = spiritual_script.new()
+	# 使用组件管理器加载并创建精神组件
+	var component_manager = ComponentManager.get_instance()
+	var spiritual_component = component_manager.create_component("spiritual")
+	if spiritual_component:
 		mount_component("spiritual", spiritual_component)
 		# 设置精神属性
-		if spiritual_component:
-			spiritual_component.spiritual_strength = spiritual_strength
-			spiritual_component.possession_ability = possession_ability
+		spiritual_component.spiritual_strength = spiritual_strength
+		spiritual_component.possession_ability = possession_ability
 
 # 获取精神组件
 func _get_spiritual_component() -> SpiritualComponent:

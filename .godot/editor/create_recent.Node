@@ -1,3 +1,7 @@
+StateMachine
+CharacterBody2D
+MobileCreature
+NavigationAgent2D
 BehaviorTree
 FleeState
 SeekFoodState
@@ -5,9 +9,6 @@ WanderState
 DeadState
 IdleState
 RestState
-StateMachine
 PerceptionSystem
-CharacterBody2D
 EcosystemManager
 EcosystemUI
-Node

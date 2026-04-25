@@ -62,10 +62,10 @@ func _mount_growth_component() -> void:
 	if has_component("growth"):
 		return
 	
-	# 加载并创建生长组件
-	var growth_script = load("res://systems/ai/components/growth_component.gd")
-	if growth_script:
-		var growth_component = growth_script.new()
+	# 使用组件管理器加载并创建生长组件
+	var component_manager = ComponentManager.get_instance()
+	var growth_component = component_manager.create_component("growth")
+	if growth_component:
 		mount_component("growth", growth_component)
 
 # 获取生长组件

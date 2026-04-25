@@ -5,12 +5,14 @@ extends BehaviorNode
 # 检查感知范围内是否有捕食者
 func execute(delta: float) -> int:
 	# 获取关联的生物节点
-	if not creature:
+	var bio_base = _get_bio_base()
+	if not bio_base:
 		return BehaviorNode.Status.FAILURE
 
 	# 通过感知系统获取威胁
-	if creature.perception_system:
-		var threat = creature.perception_system.get_nearest_threat()
+	var perception_system = bio_base.get_node_or_null("PerceptionSystem")
+	if perception_system:
+		var threat = perception_system.get_nearest_threat()
 		if threat:
 			return BehaviorNode.Status.SUCCESS
 

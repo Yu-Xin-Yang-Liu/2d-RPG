@@ -3,19 +3,11 @@
 [ext_resource type="Script" uid="uid://bxartcybst5ns" path="res://entities/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Resource" uid="uid://bq3e1vaf706ua" path="res://data/resources/base/creature_config.tres" id="2_x2jln"]
 [ext_resource type="Script" uid="uid://dtuo3m2as4v3b" path="res://systems/ai/state_machine/state_machine.gd" id="3_8dp0c"]
-[ext_resource type="Script" uid="uid://brgfdsgai0fck" path="res://systems/ai/state_machine/states/dead_state.gd" id="3_jamdy"]
-[ext_resource type="Script" uid="uid://doo1abo53s57v" path="res://systems/ai/state_machine/states/flee_state.gd" id="4_ytfgs"]
-[ext_resource type="Script" uid="uid://bsvknrgflced3" path="res://systems/ai/state_machine/states/idle_state.gd" id="5_gj8kp"]
-[ext_resource type="Script" uid="uid://cp6qjci404yis" path="res://systems/ai/state_machine/states/rest_state.gd" id="6_ijdxg"]
-[ext_resource type="Script" uid="uid://cfe1q6imnrdp4" path="res://systems/ai/state_machine/states/seek_food_state.gd" id="7_mf5td"]
-[ext_resource type="Script" uid="uid://5pvjuts255wh" path="res://systems/ai/state_machine/states/wander_state.gd" id="8_f37ph"]
-[ext_resource type="Script" uid="uid://caj48g0nul6ch" path="res://systems/perception/perception_system.gd" id="9_perception"]
+[ext_resource type="PackedScene" uid="uid://dfsu8rmkth1gr" path="res://systems/ai/components/perception/PerceptionSystem.tscn" id="4_mh0sw"]
 [ext_resource type="Script" uid="uid://d18asgq41mr26" path="res://systems/ai/behavior_tree/behavior_tree.gd" id="10_behaviortree"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oe6p0"]
 size = Vector2(30, 45)
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1dfw4"]
 
 [node name="root" type="CharacterBody2D" unique_id=172008644]
 script = ExtResource("1_creature")
@@ -39,52 +31,12 @@ color = Color(0.8, 0.4, 0.6, 1)
 position = Vector2(0, -7.5)
 shape = SubResource("RectangleShape2D_oe6p0")
 
-[node name="PerceptionSystem" type="Node2D" parent="." unique_id=1269178428]
-script = ExtResource("9_perception")
-
-[node name="Vision" type="Area2D" parent="PerceptionSystem" unique_id=2064575]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PerceptionSystem/Vision" unique_id=581041485]
-shape = SubResource("CapsuleShape2D_1dfw4")
-
-[node name="Hearing" type="Area2D" parent="PerceptionSystem" unique_id=1778608029]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PerceptionSystem/Hearing" unique_id=634873995]
-shape = SubResource("CapsuleShape2D_1dfw4")
-
-[node name="Smell" type="Area2D" parent="PerceptionSystem" unique_id=1063420755]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PerceptionSystem/Smell" unique_id=577626575]
-shape = SubResource("CapsuleShape2D_1dfw4")
-
-[node name="StateMachine" type="Node" parent="." unique_id=1523947264]
-script = ExtResource("3_8dp0c")
-metadata/_custom_type_script = "uid://dtuo3m2as4v3b"
-
-[node name="WanderState" type="Node" parent="StateMachine" unique_id=408120317]
-script = ExtResource("8_f37ph")
-metadata/_custom_type_script = "uid://5pvjuts255wh"
-
-[node name="SeekFoodState" type="Node" parent="StateMachine" unique_id=1711401654]
-script = ExtResource("7_mf5td")
-metadata/_custom_type_script = "uid://cfe1q6imnrdp4"
-
-[node name="FleeState" type="Node" parent="StateMachine" unique_id=1682278766]
-script = ExtResource("4_ytfgs")
-metadata/_custom_type_script = "uid://doo1abo53s57v"
-
-[node name="DeadState" type="Node" parent="StateMachine" unique_id=1514495230]
-script = ExtResource("3_jamdy")
-metadata/_custom_type_script = "uid://brgfdsgai0fck"
-
-[node name="IdleState" type="Node" parent="StateMachine" unique_id=249879604]
-script = ExtResource("5_gj8kp")
-metadata/_custom_type_script = "uid://bsvknrgflced3"
-
-[node name="RestState" type="Node" parent="StateMachine" unique_id=1226972250]
-script = ExtResource("6_ijdxg")
-metadata/_custom_type_script = "uid://cp6qjci404yis"
+[node name="PerceptionSystem" parent="." unique_id=40779199 instance=ExtResource("4_mh0sw")]
 
 [node name="BehaviorTree" type="Node" parent="." unique_id=166368602]
 script = ExtResource("10_behaviortree")
 metadata/_custom_type_script = "uid://d18asgq41mr26"
+
+[node name="StateMachine" type="Node" parent="." unique_id=1373937721]
+script = ExtResource("3_8dp0c")
+metadata/_custom_type_script = "uid://dtuo3m2as4v3b"

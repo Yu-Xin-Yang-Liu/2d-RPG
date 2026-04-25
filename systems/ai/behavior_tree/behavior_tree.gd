@@ -6,14 +6,13 @@ extends Node
 var root: BehaviorNode = null
 
 # 关联的生物节点
-var creature: Creature = null
-
+var bio_base: BioBase = null
 # 是否已设置
 var _initialized: bool = false
 
 func _ready() -> void:
 	# 获取生物节点引用
-	creature = get_parent() as Creature
+	bio_base = get_parent() as BioBase
 	
 	if not _initialized:
 		_setup_tree()
@@ -31,15 +30,16 @@ func execute(delta: float) -> void:
 # 构建行为树结构（可被重写）
 func _setup_tree() -> void:
 	root = _build_default_tree()
-	# 为所有节点设置 creature 引用
+	# 为所有节点设置 bio_base 引用
 	if root:
 		_init_node_creature(root)
 	_initialized = true
+	print("BehaviorTree setup complete, root:", root)
 
-# 递归初始化节点的 creature 引用
+# 递归初始化节点的 bio_base 引用
 func _init_node_creature(node: BehaviorNode) -> void:
 	if node:
-		node.creature = creature
+		node.bio_base = bio_base
 		
 		# 如果是组合节点，递归处理子节点
 		if node is CompositeNode:

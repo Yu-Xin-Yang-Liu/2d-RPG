@@ -30,7 +30,7 @@ var move_direction: Vector2 = Vector2.ZERO
 var target_direction: Vector2 = Vector2.ZERO
 
 # 拥有者
-var controller: BioBase
+var controller
 
 #endregion
 
@@ -40,6 +40,7 @@ var controller: BioBase
 func _ready() -> void:
 	# 获取拥有者
 	controller = get_parent() as BioBase
+	print("MovementComponent ready, controller:", controller)
 
 # 物理进程
 func _physics_process(delta: float) -> void:
@@ -73,7 +74,13 @@ func _update_movement(delta: float) -> void:
 	
 	# 应用移动
 	if current_speed > 0:
-		controller.position += move_direction * current_speed * delta
+		# 检查控制器是否是 CharacterBody2D
+		if controller is CharacterBody2D:
+			controller.velocity = move_direction * current_speed
+			controller.move_and_slide()
+		else:
+			# 对于普通节点，直接修改位置
+			controller.position += move_direction * current_speed * delta
 
 # 设置移动方向
 # direction: 移动方向向量

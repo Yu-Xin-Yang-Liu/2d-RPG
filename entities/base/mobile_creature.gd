@@ -44,14 +44,14 @@ func _mount_movement_component() -> void:
 	if has_component("movement"):
 		return
 	
-	# 加载并创建移动组件
-	var movement_script = load("res://systems/ai/components/movement_component.gd")
-	if movement_script:
-		var movement_component = movement_script.new()
+	# 使用组件管理器加载并创建移动组件
+	var component_manager = ComponentManager.get_instance()
+	var movement_component = component_manager.create_component("movement")
+	if movement_component:
 		mount_component("movement", movement_component)
 		# 设置移动速度
-		if movement_component:
-			movement_component.move_speed = move_speed
+		movement_component.move_speed = move_speed
+		print("Mounted movement component with speed:", move_speed)
 
 # 获取移动组件
 func _get_movement_component() -> MovementComponent:

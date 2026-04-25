@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dfsu8rmkth1gr"]
 
-[ext_resource type="Script" uid="uid://caj48g0nul6ch" path="res://systems/perception/perception_system.gd" id="1_t0ghp"]
+[ext_resource type="Script" uid="uid://h1wk3ispit45" path="res://systems/ai/components/perception/perception_system.gd" id="1_t0ghp"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t0ghp"]
 

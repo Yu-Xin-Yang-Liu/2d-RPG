@@ -58,16 +58,15 @@ func _mount_construct_component() -> void:
 	if has_component("construct"):
 		return
 	
-	# 加载并创建构造体组件
-	var construct_script = load("res://systems/ai/components/construct_component.gd")
-	if construct_script:
-		var construct_component = construct_script.new()
+	# 使用组件管理器加载并创建构造体组件
+	var component_manager = ComponentManager.get_instance()
+	var construct_component = component_manager.create_component("construct")
+	if construct_component:
 		mount_component("construct", construct_component)
 		# 设置构造体属性
-		if construct_component:
-			construct_component.construction_material = construction_material
-			construct_component.energy_source = energy_source
-			construct_component.control_mode = control_mode
+		construct_component.construction_material = construction_material
+		construct_component.energy_source = energy_source
+		construct_component.control_mode = control_mode
 
 # 获取构造体组件
 func _get_construct_component() -> ConstructComponent:

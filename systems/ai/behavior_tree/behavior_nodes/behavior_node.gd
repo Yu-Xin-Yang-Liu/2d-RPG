@@ -13,25 +13,25 @@ enum Status {
 var _status: int = Status.FAILURE
 
 # 关联的生物节点（由行为树设置）
-var creature: Creature = null
+var bio_base: BioBase = null
 
 # 执行行为节点，返回执行状态
 func execute(delta: float) -> int:
 	return _status
 
 # 获取关联的生物节点
-func _get_creature() -> Creature:
+func _get_bio_base() -> BioBase:
 	# 优先使用存储的引用
-	if creature:
-		return creature
+	if bio_base:
+		return bio_base
 	
 	# 备用方案：向上查找
 	var parent_node = get_parent()
 	while parent_node:
-		if parent_node is Creature:
-			return parent_node as Creature
+		if parent_node is BioBase:
+			return parent_node as BioBase
 		if parent_node is BehaviorTree:
-			return parent_node.get_parent() as Creature
+			return parent_node.get_parent() as BioBase
 		parent_node = parent_node.get_parent()
 	
 	return null
