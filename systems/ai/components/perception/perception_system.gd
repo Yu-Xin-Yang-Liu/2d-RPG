@@ -178,7 +178,7 @@ func _on_vision_body_entered(body: Node2D) -> void:
 	if body == _parent_creature:
 		return
 	
-	if body is Creature:
+	if body is BioBase:
 		nearby_creatures[body] = true
 	elif body.is_in_group("food") or body.has_method("get_food_value"):
 		nearby_food[body] = true
@@ -196,7 +196,7 @@ func _on_hearing_body_entered(body: Node2D) -> void:
 	if body == _parent_creature:
 		return
 	
-	if body is Creature:
+	if body is BioBase:
 		nearby_creatures[body] = true
 	elif body.is_in_group("danger"):
 		nearby_danger[body] = true
@@ -266,12 +266,12 @@ func get_nearest_threat() -> Node2D:
 
 # 获取最近的生物
 # 返回: 最近的生物节点，如果没有则返回null
-func get_nearest_creature() -> Creature:
-	var nearest: Creature = null
+func get_nearest_creature() -> BioBase:
+	var nearest: BioBase = null
 	var min_dist = INF
 	
 	for creature in nearby_creatures.keys():
-		if creature is Creature:
+		if creature is BioBase:
 			var dist = creature.global_position.distance_to(_parent_creature.global_position)
 			if dist < min_dist:
 				min_dist = dist

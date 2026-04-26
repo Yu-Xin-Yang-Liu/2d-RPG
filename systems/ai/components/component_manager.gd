@@ -5,10 +5,10 @@ extends Node
 
 # 组件路径映射
 var component_paths = {
-	"movement": "res://systems/ai/components/movement_component.gd",
-	"growth": "res://systems/ai/components/growth_component.gd",
-	"spiritual": "res://systems/ai/components/spiritual_component.gd",
-	"construct": "res://systems/ai/components/construct_component.gd"
+	"movement": "res://systems/ai/components/Creature/movement_component.gd",
+	"growth": "res://systems/ai/components/Creature/growth_component.gd",
+	"spiritual": "res://systems/ai/components/Creature/spiritual_component.gd",
+	"construct": "res://systems/ai/components/Creature/construct_component.gd"
 }
 
 # 行为树节点路径映射

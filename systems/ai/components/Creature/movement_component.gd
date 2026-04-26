@@ -79,19 +79,19 @@ func _update_movement(delta: float) -> void:
 		# 检查 controller 是否是 CharacterBody2D
 		if controller is CharacterBody2D:
 			character_body = controller
-			print("Controller is CharacterBody2D: " + str(character_body))
+			#print("Controller is CharacterBody2D: " + str(character_body))
 		# 检查 controller 的父节点是否是 CharacterBody2D
 		elif controller.get_parent() and controller.get_parent() is CharacterBody2D:
 			character_body = controller.get_parent()
-			print("Parent is CharacterBody2D: " + str(character_body))
+			#print("Parent is CharacterBody2D: " + str(character_body))
 		# 检查 controller 是否有移动方法
 		elif controller.has_method("set_velocity") and controller.has_method("move_and_slide"):
 			character_body = controller
-			print("Controller has move methods: " + str(character_body))
+			#print("Controller has move methods: " + str(character_body))
 
 		# 使用 CharacterBody2D 的移动方法
 		if character_body:
-			print("Applying movement: " + str(move_direction * current_speed))
+			#print("Applying movement: " + str(move_direction * current_speed))
 			character_body.velocity = move_direction * current_speed
 			character_body.move_and_slide()
 		else:

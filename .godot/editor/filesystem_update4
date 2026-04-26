@@ -1,1 +1,5 @@
 res://entities/creatures/sheep.tscn
+res://entities/creatures/creature.gd
+res://systems/ai/components/perception/perception_system.gd
+res://systems/ai/components/component_manager.gd
+res://systems/ai/components/Creature/movement_component.gd
