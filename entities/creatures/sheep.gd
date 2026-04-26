@@ -1,6 +1,9 @@
 class_name Sheep
 extends MobileCreature
 
+# 组件管理器
+var component_manager: ComponentManager
+
 # 羊：一种移动生物
 
 #region 羊的特定属性
@@ -26,15 +29,90 @@ func initialize() -> void:
 	super.initialize()
 	bio_type = "Sheep"
 	
+	# 获取组件管理器
+	component_manager = ComponentManager.get_instance()
+	
 	# 设置羊的基本属性
 	max_health = 100.0
 	max_energy = 80.0
-	move_speed = 80.0
+	
+	# 设置移动速度
+	var movement_component = _get_movement_component()
+	if movement_component:
+		movement_component.move_speed = 80.0
+		print("Sheep movement component initialized with speed: " + str(movement_component.move_speed))
+	else:
+		print("Warning: Movement component not found!")
 	
 	# 添加羊的特定特质
 	add_trait("wool_production", "gift", {"description": "可以生产羊毛"})
 	add_trait("milk_production", "gift", {"description": "可以产奶"})
 	add_trait("herbivore", "gift", {"description": "食草动物"})
+	
+	# 设置羊的自定义行为树
+	_setup_sheep_behavior_tree()
+	
+	# 设置羊的状态机
+	_setup_sheep_state_machine()
+	
+	# 打印初始化信息
+	print("Sheep initialized: ")
+	print("  Behavior Tree: " + str(behavior_tree))
+	print("  State Machine: " + str(state_machine))
+	print("  Components: " + str(components.keys()))
+
+# 设置羊的自定义行为树
+func _setup_sheep_behavior_tree() -> void:
+	if behavior_tree:
+		# 创建选择器（优先级最高的选择执行）
+		var selector = create_behavior_node("Selector")
+		
+		# 逃跑序列: 检测威胁 -> 执行逃跑
+		var flee_sequence = create_behavior_node("Sequence")
+		flee_sequence.add_child_node(create_behavior_node("CheckThreat"))
+		flee_sequence.add_child_node(create_behavior_node("FleeAction"))
+		selector.add_child_node(flee_sequence)
+		
+		# 觅食序列: 检测饥饿 -> 寻找食物
+		var seek_food_sequence = create_behavior_node("Sequence")
+		seek_food_sequence.add_child_node(create_behavior_node("CheckHungry"))
+		seek_food_sequence.add_child_node(create_behavior_node("SeekFoodAction"))
+		selector.add_child_node(seek_food_sequence)
+		
+		# 吃草序列: 检测饱和度 -> 吃草
+		var eat_grass_sequence = create_behavior_node("Sequence")
+		eat_grass_sequence.add_child_node(create_behavior_node("CheckHungry"))
+		eat_grass_sequence.add_child_node(create_behavior_node("EatGrassAction"))
+		selector.add_child_node(eat_grass_sequence)
+		
+		# 漫游序列: 随机漫游
+		var wander_sequence = create_behavior_node("Sequence")
+		wander_sequence.add_child_node(create_behavior_node("WanderAction"))
+		selector.add_child_node(wander_sequence)
+		
+		# 咩叫序列: 随机咩叫
+		var bleat_sequence = create_behavior_node("Sequence")
+		# 这里可以添加条件，比如随机概率
+		bleat_sequence.add_child_node(create_behavior_node("BleatAction"))
+		selector.add_child_node(bleat_sequence)
+		
+		# 待机动作
+		var idle_action = create_behavior_node("IdleAction")
+		selector.add_child_node(idle_action)
+		
+		# 设置行为树
+		behavior_tree.set_tree(selector)
+
+# 设置羊的状态机
+func _setup_sheep_state_machine() -> void:
+	if state_machine:
+		# 设置初始状态为漫游状态
+		# 假设状态机中已经有WanderState节点
+		if state_machine.has_state("WanderState"):
+			state_machine.transition_to("WanderState")
+			print("Sheep state machine initialized with WanderState")
+		else:
+			print("Warning: WanderState not found in state machine")
 
 # 死亡处理
 func on_death() -> void:
@@ -84,61 +162,6 @@ func follow_sheep(target_sheep: Sheep) -> void:
 
 #endregion
 
-#region 行为方法
-
-# 执行羊的行为
-func perform_behavior() -> void:
-	# 基于当前状态执行不同的行为
-	if current_satiety < 30:
-		# 寻找食物
-		seek_food()
-	elif current_energy < 20:
-		# 休息
-		rest()
-	else:
-		# 随机行为
-		_random_behavior()
-
-# 寻找食物
-func seek_food() -> void:
-	print("Sheep seeking food")
-	# 这里可以实现寻找草的逻辑
-	# 暂时使用随机移动模拟
-	var random_position = position + Vector2(
-		randf_range(-100, 100),
-		randf_range(-100, 100)
-	)
-	move_to(random_position)
-
-# 休息
-func rest() -> void:
-	print("Sheep resting")
-	stop_moving()
-	# 恢复能量
-	current_energy = min(current_energy + 5.0, max_energy)
-
-# 随机行为
-func _random_behavior() -> void:
-	var random_action = randf()
-	
-	if random_action < 0.3:
-		# 随机移动
-		var random_position = position + Vector2(
-			randf_range(-50, 50),
-			randf_range(-50, 50)
-		)
-		move_to(random_position)
-	elif random_action < 0.6:
-		# 休息
-		stop_moving()
-	elif random_action < 0.9:
-		# 咩叫
-		bleat()
-	else:
-		# 吃草
-		eat_grass()
-
-#endregion
 
 #region 状态检查方法
 

@@ -1,5 +1,5 @@
 class_name BioBase
-extends Node
+extends Node2D
 
 # 生物基础接口：所有生物的最小接口基类
 # 适用于：细菌、植物、哺乳动物、鸟类、微生物等
@@ -11,7 +11,7 @@ var id: String = str(randi())
 @export var bio_type: String = "Unknown"
 
 # 生命值
-@export var health: float = 100.0
+@export var current_health: float = 100.0
 
 # 最大生命值
 @export var max_health: float = 100.0
@@ -27,9 +27,6 @@ var current_energy: float = 100.0
 
 # 最大能量值
 var max_energy: float = 100.0
-
-# 位置信息
-var position: Vector2 = Vector2.ZERO
 
 # 大小
 var size: Vector2 = Vector2(1.0, 1.0)
@@ -84,6 +81,33 @@ func _initialize_ai_systems() -> void:
 	# 获取状态机
 	state_machine = get_node_or_null("StateMachine")
 
+# ============ 行为树和状态机管理 ============
+
+# 获取行为树
+func get_behavior_tree() -> BehaviorTree:
+	return behavior_tree
+
+# 获取状态机
+func get_state_machine() -> StateMachine:
+	return state_machine
+
+# 设置行为树
+func set_behavior_tree(new_behavior_tree: BehaviorTree) -> void:
+	behavior_tree = new_behavior_tree
+	if behavior_tree:
+		behavior_tree.bio_base = self
+
+# 设置状态机
+func set_state_machine(new_state_machine: StateMachine) -> void:
+	state_machine = new_state_machine
+
+# 创建行为树节点
+# node_name: 节点名称
+# 返回: 节点实例，如果创建失败返回null
+func create_behavior_node(node_name: String) -> Node:
+	var component_manager = ComponentManager.get_instance()
+	return component_manager.create_behavior_node(node_name)
+
 # 物理进程
 func _physics_process(delta: float) -> void:
 	# 更新年龄
@@ -102,14 +126,14 @@ func _physics_process(delta: float) -> void:
 		state_machine._physics_process(delta)
 
 # 更新状态
-func update_state(delta: float) -> void:
+func update_state(_delta: float) -> void:
 	# 子类可以重写此方法更新状态
 	pass
 
 # 检查生命周期
 func check_lifecycle() -> void:
 	# 检查生命值
-	if health <= 0:
+	if current_health <= 0:
 		life_state = "dead"
 		on_death()
 
@@ -126,14 +150,14 @@ func get_bio_type() -> String:
 	return bio_type
 
 # 获取当前生命值
-func get_health() -> float:
-	return health
+func get_current_health() -> float:
+	return current_health
 
 # 获取生命值百分比
-func get_health_percent() -> float:
+func get_current_health_percent() -> float:
 	if max_health <= 0:
 		return 0.0
-	return health / max_health
+	return current_health / max_health
 
 # 获取年龄
 func get_age() -> float:
@@ -159,12 +183,12 @@ func get_energy_percent() -> float:
 # 受到伤害
 # amount: 伤害值
 func take_damage(amount: float) -> void:
-	health = max(health - amount, 0.0)
+	current_health = max(current_health - amount, 0.0)
 
 # 恢复生命值
 # amount: 恢复值
 func heal(amount: float) -> void:
-	health = min(health + amount, max_health)
+	current_health = min(current_health + amount, max_health)
 
 # 消耗能量
 # amount: 消耗值
@@ -192,7 +216,7 @@ func is_dead() -> bool:
 
 # 是否受伤
 func is_hurt() -> bool:
-	return health < max_health
+	return current_health < max_health
 
 # 是否能量不足
 func is_low_energy() -> bool:
@@ -214,12 +238,12 @@ func reproduce() -> BioBase:
 # ============ 位置相关 ============
 #region 位置相关
 # 获取当前位置
-func get_position() -> Vector2:
-	return position
+#func get_position() -> Vector2:
+	#return self.position
 
 # 设置位置
-func set_position(new_position: Vector2) -> void:
-	position = new_position
+#func set_position(new_position: Vector2) -> void:
+	#self.position = new_position
 
 # ============ 感知相关（如果适用） ============
 
@@ -241,7 +265,7 @@ func get_resource_requirements() -> Dictionary:
 	return {}
 
 # 消耗资源
-func consume_resources(resources: Dictionary) -> bool:
+func consume_resources(_resources: Dictionary) -> bool:
 	# 子类可以重写此方法
 	return false
 
@@ -259,13 +283,12 @@ func to_dict() -> Dictionary:
 	return {
 		"id": id,
 		"bio_type": bio_type,
-		"health": health,
+		"current_health": current_health,
 		"max_health": max_health,
 		"age": age,
 		"life_state": life_state,
 		"current_energy": current_energy,
 		"max_energy": max_energy,
-		"position": position,
 		"size": size,
 		"ai_level": ai_level,
 		"traits": trait_system.to_dict() if trait_system else {}
@@ -275,13 +298,12 @@ func to_dict() -> Dictionary:
 func from_dict(data: Dictionary) -> void:
 	id = data.get("id", str(randi()))
 	bio_type = data.get("bio_type", "Unknown")
-	health = data.get("health", 100.0)
+	current_health = data.get("current_health", 100.0)
 	max_health = data.get("max_health", 100.0)
 	age = data.get("age", 0.0)
 	life_state = data.get("life_state", "alive")
 	current_energy = data.get("current_energy", 100.0)
 	max_energy = data.get("max_energy", 100.0)
-	position = data.get("position", Vector2.ZERO)
 	size = data.get("size", Vector2(1.0, 1.0))
 	ai_level = data.get("ai_level", 0)
 	
@@ -393,7 +415,7 @@ func print_info() -> void:
 	print("BioBase Info:")
 	print("  ID: " + id)
 	print("  Type: " + bio_type)
-	print("  Health: " + str(health) + "/" + str(max_health))
+	print("  current_health: " + str(current_health) + "/" + str(max_health))
 	print("  Age: " + str(age) + "s")
 	print("  Life State: " + life_state)
 	print("  Energy: " + str(current_energy) + "/" + str(max_energy))
@@ -418,6 +440,6 @@ static func create_bio(bio_type: String) -> BioBase:
 	return bio
 
 # 比较两个生物的优先级
-static func compare_priority(bio1: BioBase, bio2: BioBase) -> int:
+static func compare_priority(_bio1: BioBase, _bio2: BioBase) -> int:
 	# 子类可以重写此方法
 	return 0

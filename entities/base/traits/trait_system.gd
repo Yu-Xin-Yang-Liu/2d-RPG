@@ -104,8 +104,8 @@ func get_trait_effect(trait_name: String) -> Dictionary:
 # 应用特质效果
 # trait_name: 特质名称
 # target: 目标生物
-func apply_trait_effect(trait_name: String, target: BioBase) -> void:
-	var effect = get_trait_effect(trait_name)
+func apply_trait_effect(trait_name: String, _target: BioBase) -> void:
+	var _effect = get_trait_effect(trait_name)
 	# 子类可以重写此方法实现具体效果
 	pass
 

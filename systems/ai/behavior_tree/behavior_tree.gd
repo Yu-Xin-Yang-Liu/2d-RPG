@@ -30,11 +30,10 @@ func execute(delta: float) -> void:
 # 构建行为树结构（可被重写）
 func _setup_tree() -> void:
 	root = _build_default_tree()
-	# 为所有节点设置 bio_base 引用
+	# 为所有节点设置 creature 引用
 	if root:
 		_init_node_creature(root)
 	_initialized = true
-	print("BehaviorTree setup complete, root:", root)
 
 # 递归初始化节点的 bio_base 引用
 func _init_node_creature(node: BehaviorNode) -> void:

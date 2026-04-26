@@ -2,17 +2,10 @@ class_name MobileCreature
 extends BioBase
 
 # 移动生物基类：所有可以移动的生物的父类
-# 继承自 BioBase，提供移动能力
-
-#region 移动相关属性
-
+# 继承自 BioBase
 # 是否自动挂载移动组件
 @export var auto_mount_movement: bool = true
 
-# 移动速度
-@export var move_speed: float = 100.0
-
-#endregion
 
 #region 生命周期
 
@@ -49,9 +42,6 @@ func _mount_movement_component() -> void:
 	var movement_component = component_manager.create_component("movement")
 	if movement_component:
 		mount_component("movement", movement_component)
-		# 设置移动速度
-		movement_component.move_speed = move_speed
-		print("Mounted movement component with speed:", move_speed)
 
 # 获取移动组件
 func _get_movement_component() -> MovementComponent:
@@ -133,6 +123,7 @@ func get_move_speed() -> float:
 	var movement_component = _get_movement_component()
 	if movement_component:
 		return movement_component.get_move_speed()
+	print("return 0.0")
 	return 0.0
 
 # 获取移动方向
@@ -150,14 +141,12 @@ func get_move_direction() -> Vector2:
 func to_dict() -> Dictionary:
 	var data = super.to_dict()
 	data["auto_mount_movement"] = auto_mount_movement
-	data["move_speed"] = move_speed
 	return data
 
 # 从字典反序列化
 func from_dict(data: Dictionary) -> void:
 	super.from_dict(data)
 	auto_mount_movement = data.get("auto_mount_movement", true)
-	move_speed = data.get("move_speed", 100.0)
 
 #endregion
 
@@ -166,7 +155,7 @@ func from_dict(data: Dictionary) -> void:
 # 打印移动生物信息
 func print_info() -> void:
 	super.print_info()
-	print("  Move Speed: " + str(move_speed))
+	print("  Move Speed: " + str(get_move_speed()))
 	print("  Is Moving: " + str(is_moving()))
 	
 	# 打印移动组件信息

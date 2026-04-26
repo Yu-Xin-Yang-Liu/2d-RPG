@@ -1,5 +1,10 @@
-StateMachine
+RichTextLabel
+TraitSystem
+Sheep
+MovementComponent
 CharacterBody2D
+WanderAction
+StateMachine
 MobileCreature
 NavigationAgent2D
 BehaviorTree
@@ -8,7 +13,3 @@ SeekFoodState
 WanderState
 DeadState
 IdleState
-RestState
-PerceptionSystem
-EcosystemManager
-EcosystemUI

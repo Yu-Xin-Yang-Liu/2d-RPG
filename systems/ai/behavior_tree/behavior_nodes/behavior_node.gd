@@ -16,7 +16,7 @@ var _status: int = Status.FAILURE
 var bio_base: BioBase = null
 
 # 执行行为节点，返回执行状态
-func execute(delta: float) -> int:
+func execute(_delta: float) -> int:
 	return _status
 
 # 获取关联的生物节点

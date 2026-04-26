@@ -17,8 +17,8 @@ func _physics_process(delta: float) -> void:
 	# 执行行为树处理行为（行为树会设置velocity）
 	super._physics_process(delta)
 	
-	var creature = get_creature() as Creature
-	if not creature:
+	var bio_base = get_creature() as BioBase
+	if not bio_base:
 		return
 	
 	# 逃跑时间倒计时
@@ -33,12 +33,12 @@ func _physics_process(delta: float) -> void:
 
 # 检查状态转换条件
 func _check_state_transitions() -> void:
-	var creature = get_creature() as Creature
-	if not creature:
+	var bio_base = get_creature() as BioBase
+	if not bio_base:
 		return
 	
 	# 根据属性判断状态转换
-	if creature.current_energy < 20:
+	if bio_base.current_energy < 20:
 		transition_to("RestState")
-	elif creature.current_health <= 0:
+	elif bio_base.health <= 0:
 		transition_to("DeadState")

@@ -20,19 +20,20 @@ func enter() -> void:
 
 # 物理进程：每帧调用
 func _physics_process(delta: float) -> void:
-	var creature = get_creature() as Creature
-	if not creature:
+	var bio_base = get_creature()
+	if not bio_base:
 		return
 	
 	# 休息时不移动，速度为零
-	creature.velocity = Vector2.ZERO
+	if bio_base.has_method("stop_moving"):
+		bio_base.stop_moving()
 	
 	# 恢复能量
-	creature.current_energy = min(creature.current_energy + energy_recovery_rate * delta, creature.max_energy)
+	bio_base.current_energy = min(bio_base.current_energy + energy_recovery_rate * delta, bio_base.max_energy)
 	rest_duration -= delta
 	
 	# 休息结束条件
-	if rest_duration <= 0 or creature.current_energy >= creature.max_energy * 0.8:
+	if rest_duration <= 0 or bio_base.current_energy >= bio_base.max_energy * 0.8:
 		transition_to("WanderState")
 	
 	# 检查状态转换
@@ -40,12 +41,12 @@ func _physics_process(delta: float) -> void:
 
 # 检查状态转换条件
 func _check_state_transitions() -> void:
-	var creature = get_creature() as Creature
-	if not creature:
+	var bio_base = get_creature()
+	if not bio_base:
 		return
 	
 	# 根据属性判断状态转换
-	if creature.current_health <= 0:
+	if bio_base.current_health <= 0:
 		transition_to("DeadState")
-	elif creature.current_satiety <= 0:
+	elif bio_base.current_satiety <= 0:
 		transition_to("SeekFoodState")

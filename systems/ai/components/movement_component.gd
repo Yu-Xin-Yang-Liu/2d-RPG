@@ -30,8 +30,8 @@ var move_direction: Vector2 = Vector2.ZERO
 var target_direction: Vector2 = Vector2.ZERO
 
 # 拥有者
+#var controller: BioBase
 var controller
-
 #endregion
 
 #region 生命周期
@@ -40,7 +40,6 @@ var controller
 func _ready() -> void:
 	# 获取拥有者
 	controller = get_parent() as BioBase
-	print("MovementComponent ready, controller:", controller)
 
 # 物理进程
 func _physics_process(delta: float) -> void:
@@ -74,12 +73,30 @@ func _update_movement(delta: float) -> void:
 	
 	# 应用移动
 	if current_speed > 0:
-		# 检查控制器是否是 CharacterBody2D
+		# 确保 controller 是 CharacterBody2D 或其子节点
+		var character_body = null
+		
+		# 检查 controller 是否是 CharacterBody2D
 		if controller is CharacterBody2D:
-			controller.velocity = move_direction * current_speed
-			controller.move_and_slide()
+			character_body = controller
+			print("Controller is CharacterBody2D: " + str(character_body))
+		# 检查 controller 的父节点是否是 CharacterBody2D
+		elif controller.get_parent() and controller.get_parent() is CharacterBody2D:
+			character_body = controller.get_parent()
+			print("Parent is CharacterBody2D: " + str(character_body))
+		# 检查 controller 是否有移动方法
+		elif controller.has_method("set_velocity") and controller.has_method("move_and_slide"):
+			character_body = controller
+			print("Controller has move methods: " + str(character_body))
+
+		# 使用 CharacterBody2D 的移动方法
+		if character_body:
+			print("Applying movement: " + str(move_direction * current_speed))
+			character_body.velocity = move_direction * current_speed
+			character_body.move_and_slide()
 		else:
-			# 对于普通节点，直接修改位置
+			# 兼容旧代码
+			print("Using old movement method")
 			controller.position += move_direction * current_speed * delta
 
 # 设置移动方向

@@ -11,6 +11,20 @@ var component_paths = {
 	"construct": "res://systems/ai/components/construct_component.gd"
 }
 
+# 行为树节点路径映射
+var behavior_node_paths = {
+	"Selector": "res://systems/ai/behavior_tree/behavior_nodes/selector.gd",
+	"Sequence": "res://systems/ai/behavior_tree/behavior_nodes/sequence.gd",
+	"CheckThreat": "res://systems/ai/behavior_tree/behavior_nodes/conditions/check_threat.gd",
+	"CheckHungry": "res://systems/ai/behavior_tree/behavior_nodes/conditions/check_hungry.gd",
+	"FleeAction": "res://systems/ai/behavior_tree/behavior_nodes/actions/flee_action.gd",
+	"SeekFoodAction": "res://systems/ai/behavior_tree/behavior_nodes/actions/seek_food_action.gd",
+	"WanderAction": "res://systems/ai/behavior_tree/behavior_nodes/actions/wander_action.gd",
+	"IdleAction": "res://systems/ai/behavior_tree/behavior_nodes/actions/idle_action.gd",
+	"EatGrassAction": "res://systems/ai/behavior_tree/behavior_nodes/actions/eat_grass_action.gd",
+	"BleatAction": "res://systems/ai/behavior_tree/behavior_nodes/actions/bleat_action.gd"
+}
+
 # 单例实例
 static var instance: ComponentManager = null
 
@@ -66,10 +80,51 @@ func get_component_path(component_name: String) -> String:
 func get_all_component_names() -> Array:
 	return component_paths.keys()
 
+# ============ 行为树节点管理 ============
+
+# 加载行为树节点
+# node_name: 节点名称
+# 返回: 节点脚本，如果加载失败返回null
+func load_behavior_node(node_name: String) -> Script:
+	var path = behavior_node_paths.get(node_name, "")
+	if path == "":
+		return null
+	return load(path)
+
+# 创建行为树节点实例
+# node_name: 节点名称
+# 返回: 节点实例，如果创建失败返回null
+func create_behavior_node(node_name: String) -> Node:
+	var script = load_behavior_node(node_name)
+	if not script:
+		return null
+	return script.new()
+
+# 注册自定义行为树节点
+# node_name: 节点名称
+# path: 节点脚本路径
+func register_behavior_node(node_name: String, path: String) -> void:
+	behavior_node_paths[node_name] = path
+
+# 获取行为树节点路径
+# node_name: 节点名称
+# 返回: 节点路径，如果不存在返回空字符串
+func get_behavior_node_path(node_name: String) -> String:
+	return behavior_node_paths.get(node_name, "")
+
+# 获取所有行为树节点名称
+func get_all_behavior_node_names() -> Array:
+	return behavior_node_paths.keys()
+
 # ============ 调试方法 ============
 
 # 打印组件信息
 func print_component_info() -> void:
 	print("Component Manager Info:")
-	for name in component_paths.keys():
-		print("  " + name + ": " + component_paths[name])
+	print("  Components:")
+	for component_name in component_paths.keys():
+		print("    " + component_name + ": " + component_paths[component_name])
+	
+	print("  Behavior Nodes:")
+	for node_name in behavior_node_paths.keys():
+		print("    " + node_name + ": " + behavior_node_paths[node_name])

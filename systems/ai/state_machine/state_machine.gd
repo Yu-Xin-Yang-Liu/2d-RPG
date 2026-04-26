@@ -23,14 +23,6 @@ func _ready() -> void:
 	if initial_state:
 		current_state = initial_state
 		current_state.enter()
-	else:
-		# 如果没有设置初始状态，默认使用漫游状态
-		if states.has("WanderState"):
-			current_state = states["WanderState"]
-			current_state.enter()
-		elif states.has("IdleState"):
-			current_state = states["IdleState"]
-			current_state.enter()
 
 # 物理进程回调：每帧调用，处理状态机的物理更新
 func _physics_process(delta: float) -> void:

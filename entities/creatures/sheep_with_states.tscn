@@ -1,9 +1,13 @@
-[gd_scene format=3 uid="uid://cxwbvv7cl8xtd"]
+[gd_scene format=3 uid="uid://bwgujkayhpy0f"]
 
 [ext_resource type="PackedScene" uid="uid://dfsu8rmkth1gr" path="res://systems/ai/components/perception/PerceptionSystem.tscn" id="2_1fl8n"]
 [ext_resource type="Script" uid="uid://dtuo3m2as4v3b" path="res://systems/ai/state_machine/state_machine.gd" id="3_j6leo"]
 [ext_resource type="Script" uid="uid://d18asgq41mr26" path="res://systems/ai/behavior_tree/behavior_tree.gd" id="4_38jw2"]
 [ext_resource type="Script" uid="uid://71jnt05232fi" path="res://entities/creatures/sheep.gd" id="5_4x2h9"]
+[ext_resource type="Script" uid="uid://5pvjuts255wh" path="res://systems/ai/state_machine/states/wander_state.gd" id="6_1fl8n"]
+[ext_resource type="Script" uid="uid://cp6qjci404yis" path="res://systems/ai/state_machine/states/rest_state.gd" id="7_1fl8n"]
+[ext_resource type="Script" uid="uid://cfe1q6imnrdp4" path="res://systems/ai/state_machine/states/seek_food_state.gd" id="8_1fl8n"]
+[ext_resource type="Script" uid="uid://bsvknrgflced3" path="res://systems/ai/state_machine/states/idle_state.gd" id="9_1fl8n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1fl8n"]
 size = Vector2(30, 45)
@@ -35,10 +39,18 @@ shape = SubResource("RectangleShape2D_1fl8n")
 script = ExtResource("3_j6leo")
 metadata/_custom_type_script = "uid://dtuo3m2as4v3b"
 
+[node name="WanderState" type="Node" parent="StateMachine" unique_id=123456789]
+script = ExtResource("6_1fl8n")
+
+[node name="RestState" type="Node" parent="StateMachine" unique_id=123456790]
+script = ExtResource("7_1fl8n")
+
+[node name="SeekFoodState" type="Node" parent="StateMachine" unique_id=123456791]
+script = ExtResource("8_1fl8n")
+
+[node name="IdleState" type="Node" parent="StateMachine" unique_id=123456792]
+script = ExtResource("9_1fl8n")
+
 [node name="BehaviorTree" type="Node" parent="." unique_id=1351792707]
 script = ExtResource("4_38jw2")
 metadata/_custom_type_script = "uid://d18asgq41mr26"
-
-[node name="RichTextLabel" type="RichTextLabel" parent="." unique_id=1545376911]
-offset_right = 40.0
-offset_bottom = 40.0

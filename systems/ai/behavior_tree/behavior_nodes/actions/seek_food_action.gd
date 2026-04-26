@@ -3,9 +3,10 @@ class_name SeekFoodAction
 extends BehaviorNode
 
 # 执行觅食动作
-func execute(delta: float) -> int:
+func execute(_delta: float) -> int:
 	# 获取关联的生物节点
-	var bio_base = _get_bio_base()
+	bio_base = _get_bio_base()
+	#var bio_base = _get_bio_base()
 	if not bio_base:
 		return BehaviorNode.Status.FAILURE
 

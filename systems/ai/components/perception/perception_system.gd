@@ -54,7 +54,7 @@ func _ready() -> void:
 	_connect_signals()
 
 # 物理进程回调：每帧更新视觉旋转
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	# 更新扇形视觉的旋转，使其跟随生物朝向
 	_update_vision_rotation()
 

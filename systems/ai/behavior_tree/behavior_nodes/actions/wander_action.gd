@@ -6,7 +6,7 @@ extends BehaviorNode
 var wander_target: Vector2 = Vector2.ZERO
 
 # 执行漫游动作
-func execute(delta: float) -> int:
+func execute(_delta: float) -> int:
 	# 获取关联的生物节点
 	var bio_base = _get_bio_base()
 	if not bio_base:
@@ -18,13 +18,17 @@ func execute(delta: float) -> int:
 			randf_range(-100, 100),
 			randf_range(-100, 100)
 		)
+		print("New wander target: " + str(wander_target))
 	
 	# 使用移动组件进行移动
 	if bio_base.has_method("move_to"):
 		# 优先使用移动组件的速度
 		var move_speed = 100.0
-		if bio_base.has_method("get_move_speed"):
-			move_speed = bio_base.get_move_speed() or 100.0
+		if bio_base.has_method("_get_movement_component"):
+			var movement_component = bio_base._get_movement_component()
+			if movement_component:
+				move_speed = movement_component.move_speed
+		print("Moving to target: " + str(wander_target) + " with speed: " + str(move_speed))
 		bio_base.move_to(wander_target, move_speed)
 	else:
 		# 兼容旧代码

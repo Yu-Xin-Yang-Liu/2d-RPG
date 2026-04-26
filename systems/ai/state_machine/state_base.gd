@@ -35,11 +35,11 @@ func _physics_process(delta: float) -> void:
 		behavior_tree.execute(delta)
 
 # 进程回调
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 # 处理输入回调
-func _unhandled_input(event: InputEvent) -> void:
+func _unhandled_input(_event: InputEvent) -> void:
 	pass
 
 # 转换到指定状态

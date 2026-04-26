@@ -26,14 +26,14 @@ func _physics_process(delta: float) -> void:
 
 # 检查状态转换条件
 func _check_state_transitions() -> void:
-	var creature = get_creature() as Creature
-	if not creature:
+	var bio_base = get_creature() as BioBase
+	if not bio_base:
 		return
 	
 	# 根据属性判断状态转换
-	if creature.current_energy < 30:
+	if bio_base.current_energy < 30:
 		transition_to("RestState")
-	elif creature.current_satiety < 40:
+	elif bio_base.current_satiety < 40:
 		transition_to("SeekFoodState")
 	else:
 		transition_to("WanderState")
