@@ -1,7 +1,1 @@
 res://entities/creatures/sheep.tscn
-res://entities/creatures/sheep.gd
-res://systems/ai/behavior_tree/behavior_nodes/actions/wander_action.gd
-res://systems/ai/components/component_manager.gd
-res://systems/ai/components/movement_component.gd
-res://systems/ai/state_machine/states/rest_state.gd
-res://systems/ai/state_machine/states/wander_state.gd
