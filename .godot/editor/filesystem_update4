@@ -1,5 +1,10 @@
+res://systems/ai/state_machine/state_machine.tscn
+res://systems/ai/behavior_tree/BehaviorTree.tscn
+res://test_ai_system.gd
+res://systems/ai/state_machine/states/wander_state.gd
+res://entities/base/boi/bio_base.gd
+res://test_fixed_ai.gd
 res://entities/creatures/sheep.tscn
-res://entities/creatures/creature.gd
-res://systems/ai/components/perception/perception_system.gd
+res://systems/ai/state_machine/state_machine.gd
+res://test_state_machine_fix.gd
 res://systems/ai/components/component_manager.gd
-res://systems/ai/components/Creature/movement_component.gd

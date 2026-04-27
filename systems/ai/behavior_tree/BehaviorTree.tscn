@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://crthht2msiion"]
+
+[ext_resource type="Script" uid="uid://d18asgq41mr26" path="res://systems/ai/behavior_tree/behavior_tree.gd" id="1_r4jli"]
+
+[node name="BehaviorTree" type="Node" unique_id=512161750]
+script = ExtResource("1_r4jli")
+metadata/_custom_type_script = "uid://d18asgq41mr26"

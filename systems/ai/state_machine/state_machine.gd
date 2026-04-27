@@ -83,3 +83,18 @@ func has_state(state_name: String) -> bool:
 # 返回: StateBase类型的状态节点，如果不存在则返回null
 func get_state(state_name: String) -> StateBase:
 	return states.get(state_name)
+
+# 添加状态
+func add_state(state: StateBase) -> void:
+	if state:
+		add_child(state)
+		states[state.name] = state
+		state.state_machine = self
+
+# 移除状态
+func remove_state(state_name: String) -> void:
+	if states.has(state_name):
+		var state = states[state_name]
+		if state:
+			state.queue_free()
+		states.erase(state_name)

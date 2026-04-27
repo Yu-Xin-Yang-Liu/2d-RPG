@@ -28,15 +28,9 @@ func execute(_delta: float) -> int:
 			var movement_component = bio_base._get_movement_component()
 			if movement_component:
 				move_speed = movement_component.move_speed
-		print("Moving to target: " + str(wander_target) + " with speed: " + str(move_speed))
 		bio_base.move_to(wander_target, move_speed)
 	else:
 		# 兼容旧代码
-		var direction = bio_base.position.direction_to(wander_target)
-		var move_speed = 100.0
-		if bio_base.has_method("get_move_speed"):
-			move_speed = bio_base.get_move_speed() or 100.0
-		if bio_base.has_method("set_velocity"):
-			bio_base.set_velocity(direction * move_speed)
+		print("Using old move_to method")
 	
 	return BehaviorNode.Status.SUCCESS

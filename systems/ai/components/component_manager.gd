@@ -11,6 +11,27 @@ var component_paths = {
 	"construct": "res://systems/ai/components/Creature/construct_component.gd"
 }
 
+var ai_system_paths = {
+	"BehaviorTree": "res://systems/ai/behavior_tree/behavior_tree.gd",
+	"StateMachine": "res://systems/ai/state_machine/state_machine.gd"
+}
+
+func create_ai_system(system_name: String) -> Node:
+	var path = ai_system_paths.get(system_name, "")
+	var script = load(path)
+	return script.new()
+
+# 状态路径映射
+var state_paths = {
+	"WanderState": "res://systems/ai/state_machine/states/wander_state.gd",
+	"IdleState": "res://systems/ai/state_machine/states/idle_state.gd",
+	"SeekFoodState": "res://systems/ai/state_machine/states/seek_food_state.gd",
+	"DeadState": "res://systems/ai/state_machine/states/dead_state.gd",
+	"FleeState":"res://systems/ai/state_machine/states/flee_state.gd",
+	"RestState":"res://systems/ai/state_machine/states/rest_state.gd"
+	# 其他状态...
+}
+
 # 行为树节点路径映射
 var behavior_node_paths = {
 	"Selector": "res://systems/ai/behavior_tree/behavior_nodes/selector.gd",
@@ -37,15 +58,38 @@ func _ready() -> void:
 
 # ============ 静态方法 ============
 
+#region 静态方法
 # 获取单例实例
 static func get_instance() -> ComponentManager:
 	if instance == null:
 		var manager = ComponentManager.new()
 		manager._ready()
 	return instance
+#endregion
+	
+#region 状态机管理
+	# 加载状态
+func load_state(state_name: String) -> Script:
+	var path = state_paths.get(state_name, "")
+	if path == "":
+		return null
+	return load(path)
+
+# 创建状态实例
+func create_state(state_name: String) -> StateBase:
+	var script = load_state(state_name)
+	if not script:
+		return null
+	return script.new()
+
+# 注册自定义状态
+func register_state(state_name: String, path: String) -> void:
+	state_paths[state_name] = path
+#endregion
 
 # ============ 组件管理 ============
 
+#region 组件管理
 # 加载组件
 # component_name: 组件名称
 # 返回: 组件脚本，如果加载失败返回null
@@ -79,9 +123,11 @@ func get_component_path(component_name: String) -> String:
 # 获取所有组件名称
 func get_all_component_names() -> Array:
 	return component_paths.keys()
+#endregion
 
 # ============ 行为树节点管理 ============
 
+#region 行为树节点管理
 # 加载行为树节点
 # node_name: 节点名称
 # 返回: 节点脚本，如果加载失败返回null
@@ -115,6 +161,7 @@ func get_behavior_node_path(node_name: String) -> String:
 # 获取所有行为树节点名称
 func get_all_behavior_node_names() -> Array:
 	return behavior_node_paths.keys()
+#endregion
 
 # ============ 调试方法 ============
 

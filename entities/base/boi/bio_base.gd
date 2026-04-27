@@ -117,13 +117,13 @@ func _physics_process(delta: float) -> void:
 	# 检查生命周期
 	check_lifecycle()
 	
-	# 执行行为树
-	if behavior_tree:
-		behavior_tree.execute(delta)
-	
-	# 执行状态机
+	# 执行状态机（状态机会管理行为树的执行）
 	if state_machine:
 		state_machine._physics_process(delta)
+	else:
+		# 如果没有状态机，直接执行行为树
+		if behavior_tree:
+			behavior_tree.execute(delta)
 
 # 更新状态
 func update_state(_delta: float) -> void:

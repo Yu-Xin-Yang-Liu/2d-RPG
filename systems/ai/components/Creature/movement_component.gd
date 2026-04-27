@@ -30,7 +30,6 @@ var move_direction: Vector2 = Vector2.ZERO
 var target_direction: Vector2 = Vector2.ZERO
 
 # 拥有者
-#var controller: BioBase
 var controller
 #endregion
 
@@ -79,25 +78,18 @@ func _update_movement(delta: float) -> void:
 		# 检查 controller 是否是 CharacterBody2D
 		if controller is CharacterBody2D:
 			character_body = controller
-			#print("Controller is CharacterBody2D: " + str(character_body))
 		# 检查 controller 的父节点是否是 CharacterBody2D
 		elif controller.get_parent() and controller.get_parent() is CharacterBody2D:
 			character_body = controller.get_parent()
-			#print("Parent is CharacterBody2D: " + str(character_body))
 		# 检查 controller 是否有移动方法
 		elif controller.has_method("set_velocity") and controller.has_method("move_and_slide"):
 			character_body = controller
-			#print("Controller has move methods: " + str(character_body))
 
 		# 使用 CharacterBody2D 的移动方法
 		if character_body:
-			#print("Applying movement: " + str(move_direction * current_speed))
 			character_body.velocity = move_direction * current_speed
 			character_body.move_and_slide()
-		else:
-			# 兼容旧代码
-			print("Using old movement method")
-			controller.position += move_direction * current_speed * delta
+
 
 # 设置移动方向
 # direction: 移动方向向量
