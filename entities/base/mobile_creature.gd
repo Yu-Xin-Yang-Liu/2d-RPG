@@ -5,7 +5,8 @@ extends BioBase
 # 继承自 BioBase
 # 是否自动挂载移动组件
 @export var auto_mount_movement: bool = true
-
+# 缓存移动组件，避免重复查找
+var _movement_component: MovementComponent = null
 
 #region 生命周期
 
@@ -17,9 +18,12 @@ func initialize() -> void:
 	# 添加移动相关特质
 	add_trait("can_move", "gift", {"description": "可以移动"})
 	
-	# 自动挂载移动组件
+	# 延迟一帧挂载组件，避免生命周期错乱
+	await get_tree().process_frame
 	if auto_mount_movement:
 		_mount_movement_component()
+	# 缓存移动组件
+	#_update_movement_cache()
 
 # 死亡处理
 func on_death() -> void:
@@ -37,15 +41,22 @@ func _mount_movement_component() -> void:
 	if has_component("movement"):
 		return
 	
-	# 使用组件管理器加载并创建移动组件
+	# 单例空值防护
 	var component_manager = ComponentManager.get_instance()
+	if not component_manager:
+		push_warning("ComponentManager 未初始化")
+		return
 	var movement_component = component_manager.create_component("movement")
 	if movement_component:
 		mount_component("movement", movement_component)
+		# 缓存组件
+		_movement_component = movement_component
 
 # 获取移动组件
 func _get_movement_component() -> MovementComponent:
-	return get_component("movement") as MovementComponent
+	if not is_instance_valid(_movement_component):
+		_movement_component = get_component("movement") as MovementComponent
+	return _movement_component
 
 #endregion
 
@@ -54,17 +65,17 @@ func _get_movement_component() -> MovementComponent:
 # 设置移动方向
 # direction: 移动方向向量
 func set_move_direction(direction: Vector2) -> void:
-	var movement_component = _get_movement_component()
-	if movement_component:
-		movement_component.set_move_direction(direction)
+	if not _get_movement_component():
+		return
+	_get_movement_component().set_move_direction(direction)
 
 # 移动到目标位置
 # target_position: 目标位置
 # speed: 移动速度（可选）
 func move_to(target_position: Vector2, speed: float = -1.0) -> void:
-	var movement_component = _get_movement_component()
-	if movement_component:
-		movement_component.move_to(target_position, speed)
+	if not _get_movement_component():
+		return
+	_get_movement_component().move_to(target_position, speed)
 
 # 停止移动
 func stop_moving() -> void:

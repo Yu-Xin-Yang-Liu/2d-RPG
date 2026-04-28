@@ -36,53 +36,142 @@ var size: Vector2 = Vector2(1.0, 1.0)
 
 # AI 等级
 @export var ai_level: int = 0 # 0: 本能AI, 1: 灵性AI, 2: 智慧AI, 3: 超凡AI
-
+#endregion
+# 核心系统（改为节点式获取，非手动new）
 # 特质系统
 var trait_system: TraitSystem
-
 # 组件字典：键为组件名称，值为组件节点
 var components: Dictionary = {}
-
 # 行为树和状态机引用
 var behavior_tree: BehaviorTree
 var state_machine: StateMachine
-#endregion
+
 
 # ============ 生命周期方法 ============
 #region 生命周期方法
 # 初始化
 func _ready() -> void:
+	_fetch_core_components()
 	# 初始化生物
+	_auto_register_components()
+	# 初始化生物逻辑
 	initialize()
 
 # 初始化方法
 func initialize() -> void:
-	# 初始化特质系统
-	trait_system = TraitSystem.new()
-	add_child(trait_system)
-	trait_system.initialize()
-	
-	# 初始化组件字典
-	components.clear()
-	
-	# 初始化AI系统
-	_initialize_ai_systems()
-	
-	# 子类可以重写此方法进行初始化
 	pass
+	
 
-# 初始化AI系统
-func _initialize_ai_systems() -> void:
-	# 获取行为树
+# 自动注册子节点组件（无需手动mount）
+func _auto_register_components() -> void:
+	components.clear()
+	for child in get_children():
+		if child:
+			components[child.name] = child
+
+# 统一获取核心组件
+func _fetch_core_components() -> void:
+	state_machine = get_node_or_null("StateMachine")
+	trait_system = get_node_or_null("TraitSystem")
+	# 绑定行为树宿主为生物节点
 	behavior_tree = get_node_or_null("BehaviorTree")
 	if behavior_tree:
 		behavior_tree.bio_base = self
 	
-	# 获取状态机
-	state_machine = get_node_or_null("StateMachine")
+# 物理进程
+func _physics_process(delta: float) -> void:
+	if is_dead():
+		return
+	# 更新年龄
+	age += delta
+	# 更新状态
+	update_state(delta)
+	# 检查生命周期
+	check_lifecycle()
+	
+	if is_instance_valid(state_machine):
+		state_machine._physics_process(delta)
+	elif is_instance_valid(behavior_tree):
+		behavior_tree.execute(delta)
 
+	# # 执行状态机（状态机会管理行为树的执行）
+	# if state_machine:
+	# 	state_machine._physics_process(delta)
+	# else:
+	# 	# 如果没有状态机，直接执行行为树
+	# 	if behavior_tree:
+	# 		behavior_tree.execute(delta)
+
+# 更新状态
+func update_state(_delta: float) -> void:
+	# 子类可以重写此方法更新状态
+	pass
+
+# 检查生命周期
+func check_lifecycle() -> void:
+	# 检查生命值
+	if current_health <= 0:
+		life_state = "dead"
+		on_death()
+
+# 死亡处理
+func on_death() -> void:
+	# 子类可以重写此方法处理死亡逻辑
+	#stop_all_actions()
+	pass
+#endregion
+
+#region 安全获取组件（核心：解决满屏if判空）
+func get_component_safe(component_name: String) -> Node:
+	return components.get(component_name) or get_node_or_null(component_name)
+
+func has_component_safe(component_name: String) -> bool:
+	return is_instance_valid(get_component_safe(component_name))
+	
+func get_all_components() -> Array:
+	return components.values()
+#endregion
+
+# ============ 组件管理方法 ============
+#region 组件管理方法
+# 挂载组件
+# component_name: 组件名称
+# component: 组件节点
+func mount_component(component_name: String, component: Node) -> bool:
+	if component_name in components:
+		return false
+	
+	add_child(component)
+	components[component_name] = component
+	return true
+
+# 卸载组件
+# component_name: 组件名称
+func unmount_component(component_name: String) -> bool:
+	if component_name not in components:
+		return false
+	
+	var component = components[component_name]
+	if component:
+		component.queue_free()
+	components.erase(component_name)
+	return true
+
+# 获取组件
+# component_name: 组件名称
+func get_component(component_name: String) -> Node:
+	return components.get(component_name, null)
+
+# 检查是否有组件
+# component_name: 组件名称
+func has_component(component_name: String) -> bool:
+	return component_name in components
+
+#endregion
+	
 # ============ 行为树和状态机管理 ============
 
+#region 行为树和状态机管理
 # 获取行为树
 func get_behavior_tree() -> BehaviorTree:
 	return behavior_tree
@@ -107,41 +196,8 @@ func set_state_machine(new_state_machine: StateMachine) -> void:
 func create_behavior_node(node_name: String) -> Node:
 	var component_manager = ComponentManager.get_instance()
 	return component_manager.create_behavior_node(node_name)
-
-# 物理进程
-func _physics_process(delta: float) -> void:
-	# 更新年龄
-	age += delta
-	# 更新状态
-	update_state(delta)
-	# 检查生命周期
-	check_lifecycle()
-	
-	# 执行状态机（状态机会管理行为树的执行）
-	if state_machine:
-		state_machine._physics_process(delta)
-	else:
-		# 如果没有状态机，直接执行行为树
-		if behavior_tree:
-			behavior_tree.execute(delta)
-
-# 更新状态
-func update_state(_delta: float) -> void:
-	# 子类可以重写此方法更新状态
-	pass
-
-# 检查生命周期
-func check_lifecycle() -> void:
-	# 检查生命值
-	if current_health <= 0:
-		life_state = "dead"
-		on_death()
-
-# 死亡处理
-func on_death() -> void:
-	# 子类可以重写此方法处理死亡逻辑
-	pass
 #endregion
+
 
 # ============ 通用方法 ============
 #region 通用方法
@@ -312,45 +368,6 @@ func from_dict(data: Dictionary) -> void:
 		trait_system.from_dict(traits_data)
 #endregion
 
-# ============ 组件管理方法 ============
-#region 组件管理方法
-# 挂载组件
-# component_name: 组件名称
-# component: 组件节点
-func mount_component(component_name: String, component: Node) -> bool:
-	if component_name in components:
-		return false
-	
-	add_child(component)
-	components[component_name] = component
-	return true
-
-# 卸载组件
-# component_name: 组件名称
-func unmount_component(component_name: String) -> bool:
-	if component_name not in components:
-		return false
-	
-	var component = components[component_name]
-	if component:
-		component.queue_free()
-	components.erase(component_name)
-	return true
-
-# 获取组件
-# component_name: 组件名称
-func get_component(component_name: String) -> Node:
-	return components.get(component_name, null)
-
-# 检查是否有组件
-# component_name: 组件名称
-func has_component(component_name: String) -> bool:
-	return component_name in components
-
-# 获取所有组件
-func get_all_components() -> Array:
-#endregion
-	return components.values()
 
 # ============ 特质管理方法 ============
 #region 特质管理方法
@@ -359,27 +376,19 @@ func get_all_components() -> Array:
 # trait_type: 特质类型
 # data: 特质数据
 func add_trait(trait_name: String, trait_type: String, data: Dictionary = {}) -> void:
-	if trait_system:
+	if is_instance_valid(trait_system):
 		trait_system.add_trait(trait_name, trait_type, data)
 
-# 移除特质
-# trait_name: 特质名称
 func remove_trait(trait_name: String) -> bool:
-	if trait_system:
-		return trait_system.remove_trait(trait_name)
-	return false
+	return is_instance_valid(trait_system) && trait_system.remove_trait(trait_name)
 
-# 检查是否有特质
-# trait_name: 特质名称
 func has_trait(trait_name: String) -> bool:
-	if trait_system:
-		return trait_system.has_trait(trait_name)
-	return false
+	return is_instance_valid(trait_system) && trait_system.has_trait(trait_name)
 
 # 获取特质
 # trait_name: 特质名称
 func get_trait(trait_name: String) -> Dictionary:
-	if trait_system:
+	if is_instance_valid(trait_system):
 		return trait_system.get_trait(trait_name)
 	return {}
 #endregion

@@ -13,21 +13,19 @@ var _initialized: bool = false
 func _ready() -> void:
 	# 获取生物节点引用
 	bio_base = get_parent() as BioBase
-	if not bio_base:
-		push_warning("BehaviorTree 父节点必须是 BioBase")
-		return
+	
 	if not _initialized:
 		_setup_tree()
 
 # 物理进程：每帧执行行为树
 func _physics_process(delta: float) -> void:
-	execute(delta)
+	if root:
+		root.execute(delta)
 
 # 执行行为树（外部调用）
 func execute(delta: float) -> void:
-	if not bio_base or not bio_base.is_alive() or not root:
-		return
-	root.execute(delta)
+	if root:
+		root.execute(delta)
 
 # 构建行为树结构（可被重写）
 func _setup_tree() -> void:
@@ -39,11 +37,13 @@ func _setup_tree() -> void:
 
 # 递归初始化节点的 bio_base 引用
 func _init_node_creature(node: BehaviorNode) -> void:
-	if not node: return
-	node.bio_base = bio_base
-	if node is CompositeNode:
-		for child in node.get_child_nodes():
-			_init_node_creature(child)
+	if node:
+		node.bio_base = bio_base
+		
+		# 如果是组合节点，递归处理子节点
+		if node is CompositeNode:
+			for child in node.get_child_nodes():
+				_init_node_creature(child)
 
 # 创建默认行为树
 func _build_default_tree() -> BehaviorNode:

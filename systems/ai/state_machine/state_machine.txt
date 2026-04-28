@@ -2,12 +2,10 @@ class_name StateMachine
 extends Node
 
 # 状态机管理器：管理生物的状态转换
-# 【优化】增加状态变更信号
-signal state_transitioned(from: String, to: String)
+
 # 初始状态：场景启动时的第一个状态
 @export var initial_state: StateBase
 
-#region 生命周期
 # 当前正在执行的状态
 var current_state: StateBase
 # 存储所有状态的字典，键为状态名称，值为状态节点
@@ -23,15 +21,11 @@ func _ready() -> void:
 	
 	# 设置初始状态
 	if initial_state:
-		print("初始状态已设置为: " + initial_state.name)
 		current_state = initial_state
 		current_state.enter()
 
 # 物理进程回调：每帧调用，处理状态机的物理更新
 func _physics_process(delta: float) -> void:
-	var bio = get_parent() as BioBase
-	if bio and not bio.is_alive():
-		return
 	if current_state:
 		current_state._physics_process(delta)
 
@@ -44,14 +38,13 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if current_state:
 		current_state._unhandled_input(event)
-#endregion
 
 # 转换到指定状态
 # state_name: 要转换到的目标状态名称
 func transition_to(state_name: String) -> void:
 	# 检查目标状态是否存在
 	if not states.has(state_name):
-		print("状态不存在: " + state_name)
+		push_warning("State not found: " + state_name)
 		return
 	
 	# 获取目标状态
@@ -71,7 +64,6 @@ func transition_to(state_name: String) -> void:
 	# 设置新状态并进入
 	current_state = new_state
 	current_state.enter()
-	state_transitioned.emit(old_state_name, state_name)
 
 # 获取当前状态的名称
 # 返回: 当前状态的名称字符串

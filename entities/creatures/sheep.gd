@@ -35,7 +35,7 @@ func initialize() -> void:
 	# 设置羊的基本属性
 	max_health = 100.0
 	max_energy = 80.0
-	
+	await get_tree().process_frame
 	# 设置移动速度
 	var movement_component = _get_movement_component()
 	if movement_component:
@@ -85,20 +85,23 @@ func _setup_sheep_behavior_tree() -> void:
 		eat_grass_sequence.add_child_node(create_behavior_node("EatGrassAction"))
 		selector.add_child_node(eat_grass_sequence)
 		
+		selector.add_child_node(create_behavior_node("WanderAction"))
+		selector.add_child_node(create_behavior_node("BleatAction"))
+		selector.add_child_node(create_behavior_node("IdleAction"))
 		# 漫游序列: 随机漫游
-		var wander_sequence = create_behavior_node("Sequence")
-		wander_sequence.add_child_node(create_behavior_node("WanderAction"))
-		selector.add_child_node(wander_sequence)
+		#var wander_sequence = create_behavior_node("Sequence")
+		#wander_sequence.add_child_node(create_behavior_node("WanderAction"))
+		#selector.add_child_node(wander_sequence)
 		
 		# 咩叫序列: 随机咩叫
-		var bleat_sequence = create_behavior_node("Sequence")
-		# 这里可以添加条件，比如随机概率
-		bleat_sequence.add_child_node(create_behavior_node("BleatAction"))
-		selector.add_child_node(bleat_sequence)
+		#var bleat_sequence = create_behavior_node("Sequence")
+		## 这里可以添加条件，比如随机概率
+		#bleat_sequence.add_child_node(create_behavior_node("BleatAction"))
+		#selector.add_child_node(bleat_sequence)
 		
 		# 待机动作
-		var idle_action = create_behavior_node("IdleAction")
-		selector.add_child_node(idle_action)
+		#var idle_action = create_behavior_node("IdleAction")
+		#selector.add_child_node(idle_action)
 		
 		# 设置行为树
 		behavior_tree.set_tree(selector)
@@ -107,6 +110,7 @@ func _setup_sheep_behavior_tree() -> void:
 func _setup_sheep_state_machine() -> void:
 	if state_machine:
 		# 设置初始状态为漫游状态
+		#state_machine.add_state(state_machine.states["WanderState"])
 		# 假设状态机中已经有WanderState节点
 		if state_machine.has_state("WanderState"):
 			state_machine.transition_to("WanderState")
@@ -137,17 +141,15 @@ func shear_wool(amount: float = 50.0) -> float:
 # amount: 挤奶的数量
 # 返回: 实际挤奶的数量
 func milk() -> float:
-	var actual_amount = milk_production
-	print("Sheep milked: " + str(actual_amount) + " milk")
-	return actual_amount
+	print("羊 挤奶: " + str(milk_production) + " milk")
+	return milk_production
 
 # 吃草
 # amount: 吃草的数量
 func eat_grass(amount: float = 20.0) -> void:
 	if current_satiety < max_satiety:
-		var actual_amount = min(amount, max_satiety - current_satiety)
-		current_satiety += actual_amount
-		print("Sheep ate " + str(actual_amount) + " grass")
+		current_satiety += min(amount, max_satiety - current_satiety)
+		print("羊 吃 " + str(current_satiety) + " 草")
 
 # 咩叫
 func bleat() -> void:

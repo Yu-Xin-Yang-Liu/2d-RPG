@@ -1,0 +1,36 @@
+# 动作节点：漫游动作，使生物在区域内随机移动
+class_name WanderAction
+extends BehaviorNode
+
+# 漫游目标位置
+var wander_target: Vector2 = Vector2.ZERO
+
+# 执行漫游动作
+func execute(_delta: float) -> int:
+	# 获取关联的生物节点
+	var bio_base = _get_bio_base()
+	if not bio_base:
+		return BehaviorNode.Status.FAILURE
+	
+	# 如果没有目标或已到达目标，重新生成随机目标
+	if wander_target == Vector2.ZERO or bio_base.position.distance_to(wander_target) < 20.0:
+		wander_target = bio_base.position + Vector2(
+			randf_range(-100, 100),
+			randf_range(-100, 100)
+		)
+		print("New wander target: " + str(wander_target))
+	
+	# 使用移动组件进行移动
+	if bio_base.has_method("move_to"):
+		# 优先使用移动组件的速度
+		var move_speed = 100.0
+		if bio_base.has_method("_get_movement_component"):
+			var movement_component = bio_base._get_movement_component()
+			if movement_component:
+				move_speed = movement_component.move_speed
+		bio_base.move_to(wander_target, move_speed)
+	else:
+		# 兼容旧代码
+		print("Using old move_to method")
+	
+	return BehaviorNode.Status.SUCCESS

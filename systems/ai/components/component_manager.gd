@@ -17,12 +17,13 @@ var ai_system_paths = {
 }
 
 func create_ai_system(system_name: String) -> Node:
-	var path = ai_system_paths.get(system_name, "")
-	var script = load(path)
-	return script.new()
+	var path = ai_system_paths.get(system_name)
+	var script = load(path) if path else null
+	return script.new() if script else null
 
 # 状态路径映射
 var state_paths = {
+	"StateBase": "res://systems/ai/state_machine/state_base.gd",
 	"WanderState": "res://systems/ai/state_machine/states/wander_state.gd",
 	"IdleState": "res://systems/ai/state_machine/states/idle_state.gd",
 	"SeekFoodState": "res://systems/ai/state_machine/states/seek_food_state.gd",
@@ -55,6 +56,7 @@ static var instance: ComponentManager = null
 func _ready() -> void:
 	if instance == null:
 		instance = self
+		set_process(false)
 
 # ============ 静态方法 ============
 
@@ -70,17 +72,13 @@ static func get_instance() -> ComponentManager:
 #region 状态机管理
 	# 加载状态
 func load_state(state_name: String) -> Script:
-	var path = state_paths.get(state_name, "")
-	if path == "":
-		return null
-	return load(path)
+	var path = state_paths.get(state_name)
+	return load(path) if path else null
 
 # 创建状态实例
 func create_state(state_name: String) -> StateBase:
 	var script = load_state(state_name)
-	if not script:
-		return null
-	return script.new()
+	return script.new() if script else null
 
 # 注册自定义状态
 func register_state(state_name: String, path: String) -> void:
@@ -94,19 +92,15 @@ func register_state(state_name: String, path: String) -> void:
 # component_name: 组件名称
 # 返回: 组件脚本，如果加载失败返回null
 func load_component(component_name: String) -> Script:
-	var path = component_paths.get(component_name, "")
-	if path == "":
-		return null
-	return load(path)
-
+	var path = component_paths.get(component_name)
+	return load(path) if path else null
+	
 # 创建组件实例
 # component_name: 组件名称
 # 返回: 组件实例，如果创建失败返回null
 func create_component(component_name: String) -> Node:
 	var script = load_component(component_name)
-	if not script:
-		return null
-	return script.new()
+	return script.new() if script else null
 
 # 注册自定义组件
 # component_name: 组件名称
@@ -132,19 +126,15 @@ func get_all_component_names() -> Array:
 # node_name: 节点名称
 # 返回: 节点脚本，如果加载失败返回null
 func load_behavior_node(node_name: String) -> Script:
-	var path = behavior_node_paths.get(node_name, "")
-	if path == "":
-		return null
-	return load(path)
+	var path = behavior_node_paths.get(node_name)
+	return load(path) if path else null
 
 # 创建行为树节点实例
 # node_name: 节点名称
 # 返回: 节点实例，如果创建失败返回null
 func create_behavior_node(node_name: String) -> Node:
 	var script = load_behavior_node(node_name)
-	if not script:
-		return null
-	return script.new()
+	return script.new() if script else null
 
 # 注册自定义行为树节点
 # node_name: 节点名称

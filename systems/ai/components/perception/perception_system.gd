@@ -32,22 +32,24 @@ var _hearing_area: Area2D
 # 嗅觉区域
 var _smell_area: Area2D
 # 父节点（生物）
-var _parent_creature: Node2D
-
+#var _parent_creature: Node2D
+var _parent_creature: BioBase
 # ============ 感知列表 ============
 
-# 感知到的附近生物（使用字典存储，键为对象，值为存在标记）
-var nearby_creatures: Dictionary[Node2D, bool] = {}
+# 感知到的附近生物（使用字典存储，键为对象名称，值为存在标记）
+var nearby_creatures: Dictionary[StringName, bool] = {}
 # 感知到的附近食物
-var nearby_food: Dictionary[Node2D, bool] = {}
+var nearby_food: Dictionary[StringName, bool] = {}
 # 感知到的附近危险
-var nearby_danger: Dictionary[Node2D, bool] = {}
+var nearby_danger: Dictionary[StringName, bool] = {}
 
 # ============ 生命周期 ============
 
+#region 生命周期
 func _ready() -> void:
 	# 缓存父节点
-	_parent_creature = get_parent() as Node2D
+	#_parent_creature = get_parent() as Node2D
+	_parent_creature = get_parent() as BioBase
 	# 设置感知区域
 	_setup_perception_areas()
 	# 连接信号
@@ -55,16 +57,22 @@ func _ready() -> void:
 
 # 物理进程回调：每帧更新视觉旋转
 func _physics_process(_delta: float) -> void:
+	if not _parent_creature or not _parent_creature.is_alive():
+		return
 	# 更新扇形视觉的旋转，使其跟随生物朝向
 	_update_vision_rotation()
 
 # 更新视觉旋转
 func _update_vision_rotation() -> void:
+#endregion
 	if _vision_area and _parent_creature:
 		_vision_area.rotation = _parent_creature.rotation
+	else:
+		print("PerceptionSystem: _parent_creature is null or not alive")
 
 # ============ 私有方法：设置感知区域 ============
 
+#region 设置感知区域
 # 设置所有感知区域
 func _setup_perception_areas() -> void:
 	# 获取或创建视觉区域
@@ -150,10 +158,9 @@ func _create_sector_points(radius: float, half_angle: float) -> PackedVector2Arr
 	var num_segments = 32
 	for i in range(num_segments + 1):
 		var angle = -half_angle + (2.0 * half_angle * i / num_segments)
-		var point = Vector2(cos(angle), sin(angle)) * radius
-		points.append(point)
-	
+		points.append(Vector2(cos(angle), sin(angle)) * radius)
 	return points
+#endregion
 
 # ============ 信号连接 ============
 
@@ -175,45 +182,49 @@ func _connect_signals() -> void:
 
 # 视觉区域进入回调
 func _on_vision_body_entered(body: Node2D) -> void:
-	if body == _parent_creature:
+	if body == _parent_creature or not is_instance_valid(body):
 		return
-	
-	if body is BioBase:
-		nearby_creatures[body] = true
+	var bio = body as BioBase
+	if bio and not bio.is_alive():
+		return
+	#if body is BioBase:
+	if bio:
+		nearby_creatures[body.name] = true
+		# nearby_creatures[body] = true
 	elif body.is_in_group("food") or body.has_method("get_food_value"):
-		nearby_food[body] = true
+		nearby_food[body.name] = true
 	elif body.is_in_group("danger"):
-		nearby_danger[body] = true
+		nearby_danger[body.name] = true
 
 # 视觉区域离开回调
 func _on_vision_body_exited(body: Node2D) -> void:
-	nearby_creatures.erase(body)
-	nearby_food.erase(body)
-	nearby_danger.erase(body)
+	nearby_creatures.erase(body.name)
+	nearby_food.erase(body.name)
+	nearby_danger.erase(body.name)
 
 # 听觉区域进入回调
 func _on_hearing_body_entered(body: Node2D) -> void:
-	if body == _parent_creature:
+	if body == _parent_creature or not is_instance_valid(body):
 		return
 	
 	if body is BioBase:
-		nearby_creatures[body] = true
+		nearby_creatures[body.name] = true
 	elif body.is_in_group("danger"):
-		nearby_danger[body] = true
+		nearby_danger[body.name] = true
 
 # 听觉区域离开回调
 func _on_hearing_body_exited(body: Node2D) -> void:
-	nearby_creatures.erase(body)
-	nearby_danger.erase(body)
+	nearby_creatures.erase(body.name)
+	nearby_danger.erase(body.name)
 
 # 嗅觉区域进入回调
 func _on_smell_body_entered(body: Node2D) -> void:
 	if body.is_in_group("food") or body.has_method("get_food_value"):
-		nearby_food[body] = true
+		nearby_food[body.name] = true
 
 # 嗅觉区域离开回调
 func _on_smell_body_exited(body: Node2D) -> void:
-	nearby_food.erase(body)
+	nearby_food.erase(body.name)
 
 # ============ 公共接口 ============
 
